@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#FF6B00">
+    <title>CarTaxi — Вызов эвакуатора №1 в России 🚗</title>
+    <meta name="description" content="Вызов эвакуатора 24/7 по России. Честные цены, быстрая подача за 15 минут. Круглосуточная поддержка. От 1500₽.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome для красивых иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&language=ru"></script>
+    
+    <style>
+        :root {
+            --primary: #FF6B00;
+            --primary-dark: #E65500;
+            --primary-light: #FF8A33;
+            --secondary: #1E293B;
+            --accent: #10B981;
+            --text: #334155;
+            --bg: #FFFFFF;
+            --bg-alt: #F8FAFC;
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+        
+        /* Hero Section - Улучшенный */
+        .hero {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 8rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255,107,0,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 8s ease-in-out infinite;
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 6s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+        
+        /* Кнопки - Улучшенные */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.2rem 2.8rem;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 16px;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 10px 40px rgba(255, 107, 0, 0.4);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 60px rgba(255, 107, 0, 0.5);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Feature Cards - Улучшенные */
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary);
+        }
+        
+        .feature-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.3);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        /* Service Cards - Супер улучшенные */
+        .service-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+            transform: scaleX(0);
+            transition: transform 0.4s;
+        }
+        
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .service-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(255, 107, 0, 0.2);
+        }
+        
+        .service-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 5px 15px rgba(255, 107, 0, 0.3));
+            transition: transform 0.3s;
+        }
+        
+        .service-card:hover .service-icon {
+            transform: scale(1.15) rotate(-5deg);
+        }
+        
+        .service-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 1.5rem 0;
+        }
+        
+        /* Stats - Красивые */
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        
+        .stat-number {
+            font-size: 4rem;
+            font-weight: 900;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 5px 20px rgba(255, 107, 0, 0.3);
+        }
+        
+        .stat-label {
+            font-size: 1.125rem;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* Navbar - Улучшенный */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+        
+        nav.transparent {
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: none;
+        }
+        
+        nav.transparent a {
+            color: white !important;
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+        
+        .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary);
+        }
+        
+        /* Fleet Section - Новая секция с фото */
+        .fleet-card {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            transition: all 0.4s;
+            height: 350px;
+        }
+        
+        .fleet-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+        
+        .fleet-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .fleet-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            padding: 2rem;
+            transform: translateY(50px);
+            transition: transform 0.4s;
+        }
+        
+        .fleet-card:hover .fleet-overlay {
+            transform: translateY(0);
+        }
+        
+        .fleet-title {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .fleet-desc {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+        }
+        
+        /* Price Table - Улучшенная */
+        .price-table {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        }
+        
+        .price-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 1.8rem 2.5rem;
+            border-bottom: 1px solid #E2E8F0;
+            transition: all 0.3s;
+        }
+        
+        .price-row:hover {
+            background: linear-gradient(90deg, rgba(255,107,0,0.05) 0%, transparent 100%);
+            transform: translateX(5px);
+        }
+        
+        .price-row:last-child {
+            border-bottom: none;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate-in {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        /* Modal - Улучшенный */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            padding: 3rem;
+            max-width: 650px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 100px rgba(0, 0, 0, 0.5);
+            animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            cursor: pointer;
+            color: #94A3B8;
+            transition: all 0.3s;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-close:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                min-height: 80vh;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Scroll animations */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.6s ease-out;
+        }
+        
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar" class="transparent">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">
+                <i class="fas fa-truck-pickup"></i>
+                CarTaxi
+            </a>
+            <ul class="nav-links">
+                <li><a href="#order" class="nav-link"><i class="fas fa-map-marked-alt"></i> Заказать</a></li>
+                <li><a href="#services" class="nav-link">Услуги</a></li>
+                <li><a href="#fleet" class="nav-link">Автопарк</a></li>
+                <li><a href="#prices" class="nav-link">Цены</a></li>
+                <li><a href="#drivers" class="nav-link">Водителям</a></li>
+            </ul>
+            <a href="tel:88003335181" class="btn btn-primary" style="padding: 0.8rem 1.8rem; font-size: 1rem;">
+                <i class="fas fa-phone-alt"></i>
+                8 800 333 51 81
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="hero-content max-w-4xl">
+                <h1 class="hero-title animate-in">
+                    Вызов эвакуатора<br>
+                    <span style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">за 15 минут</span>
+                </h1>
+                <p class="hero-subtitle animate-in" style="animation-delay: 0.2s;">
+                    Работаем 24/7 по всей России в 300+ городах. Честные цены от 1500₽. 
+                    <strong>Гарантия низкой цены -30% от рынка.</strong>
+                </p>
+                <div class="flex flex-wrap gap-4 animate-in" style="animation-delay: 0.4s;">
+                    <a href="#order" class="btn btn-primary">
+                        <i class="fas fa-map-marked-alt"></i>
+                        Заказать эвакуатор
+                    </a>
+                    <a href="tel:88003335181" class="btn btn-secondary">
+                        <i class="fas fa-phone"></i>
+                        Позвонить сейчас
+                    </a>
+                </div>
+                <div class="mt-12 grid grid-cols-3 gap-8 animate-in" style="animation-delay: 0.6s;">
+                    <div class="stat-card">
+                        <div class="stat-number">300+</div>
+                        <div class="stat-label">Городов России</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Минут подача</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">Работаем</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-24 bg-white">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl lg:text-6xl font-bold mb-6">Почему выбирают <span style="color: var(--primary);">CarTaxi</span></h2>
+                <p class="text-2xl text-gray-600">Надежно, быстро и выгодно</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="feature-card scroll-reveal">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Честные цены</h3>
+                    <p class="text-gray-600 text-lg">Стоимость известна заранее и не меняется. На 30% дешевле рынка.</p>
+                </div>
+                <div class="feature-card scroll-reveal" style="animation-delay: 0.1s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Быстрая подача</h3>
+                    <p class="text-gray-600 text-lg">В городе справляемся за 15 минут. Оптимальное распределение.</p>
+                </div>
+                <div class="feature-card scroll-reveal" style="animation-delay: 0.2s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Надежность</h3>
+                    <p class="text-gray-600 text-lg">Опытные водители с рейтингом. Страхование груза.</p>
+                </div>
+                <div class="feature-card scroll-reveal" style="animation-delay: 0.3s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3">Приложение</h3>
+                    <p class="text-gray-600 text-lg">Вызов в 2 клика. Отслеживание в реальном времени.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fleet Section - НОВАЯ СЕКЦИЯ С ФОТО -->
+    <section id="fleet" class="py-24 bg-gradient-to-br from-gray-50 to-white">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl lg:text-6xl font-bold mb-6">Наш <span style="color: var(--primary);">автопарк</span></h2>
+                <p class="text-2xl text-gray-600">Современные эвакуаторы для любых задач</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="fleet-card scroll-reveal">
+                    <img src="https://images.unsplash.com/photo-1621939514649-280e2ee25f60?w=800&h=600&fit=crop&q=80" alt="Эвакуатор для легковых авто" class="fleet-image">
+                    <div class="fleet-overlay">
+                        <div class="fleet-title">
+                            <i class="fas fa-car"></i> Легковые авто
+                        </div>
+                        <div class="fleet-desc">Современные платформы для безопасной эвакуации легковых автомобилей любых марок</div>
+                    </div>
+                </div>
+                <div class="fleet-card scroll-reveal" style="animation-delay: 0.1s;">
+                    <img src="https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&h=600&fit=crop&q=80" alt="Эвакуатор манипулятор" class="fleet-image">
+                    <div class="fleet-overlay">
+                        <div class="fleet-title">
+                            <i class="fas fa-truck-loading"></i> Манипулятор
+                        </div>
+                        <div class="fleet-desc">Эвакуаторы с краном для сложных случаев и тяжелых транспортных средств</div>
+                    </div>
+                </div>
+                <div class="fleet-card scroll-reveal" style="animation-delay: 0.2s;">
+                    <img src="https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&h=600&fit=crop&q=80" alt="Эвакуатор для спецтехники" class="fleet-image">
+                    <div class="fleet-overlay">
+                        <div class="fleet-title">
+                            <i class="fas fa-truck-monster"></i> Спецтехника
+                        </div>
+                        <div class="fleet-desc">Мощные эвакуаторы для транспортировки грузовиков, автобусов и спецтехники</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Преимущества парка -->
+            <div class="mt-16 grid md:grid-cols-4 gap-6">
+                <div class="text-center p-6 bg-white rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-3">🚛</div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">50+</div>
+                    <div class="text-gray-600 font-semibold">Эвакуаторов</div>
+                </div>
+                <div class="text-center p-6 bg-white rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-3">⭐</div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">4.9</div>
+                    <div class="text-gray-600 font-semibold">Рейтинг сервиса</div>
+                </div>
+                <div class="text-center p-6 bg-white rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-3">👨‍🔧</div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">100%</div>
+                    <div class="text-gray-600 font-semibold">Опытные водители</div>
+                </div>
+                <div class="text-center p-6 bg-white rounded-2xl shadow-lg">
+                    <div class="text-4xl mb-3">🛡️</div>
+                    <div class="text-3xl font-bold text-orange-600 mb-2">24/7</div>
+                    <div class="text-gray-600 font-semibold">Страхование</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-24 bg-white">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl lg:text-6xl font-bold mb-6">Услуги <span style="color: var(--primary);">эвакуатора</span></h2>
+                <p class="text-2xl text-gray-600">Перевозим всё: от мотоциклов до грузовиков</p>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card scroll-reveal">
+                    <div class="service-icon">🚗</div>
+                    <h3 class="text-2xl font-bold mb-2">Легковые авто</h3>
+                    <p class="text-gray-600 mb-4 text-lg">Эвакуация легковых автомобилей любых марок</p>
+                    <div class="service-price">от 1 500 ₽</div>
+                    <button onclick="openCalculator()" class="btn btn-primary w-full">
+                        <i class="fas fa-paper-plane"></i>
+                        Заказать
+                    </button>
+                </div>
+                <div class="service-card scroll-reveal" style="animation-delay: 0.1s;">
+                    <div class="service-icon">🚙</div>
+                    <h3 class="text-2xl font-bold mb-2">Внедорожники</h3>
+                    <p class="text-gray-600 mb-4 text-lg">Джипы и кроссоверы всех размеров</p>
+                    <div class="service-price">от 2 400 ₽</div>
+                    <button onclick="openCalculator()" class="btn btn-primary w-full">
+                        <i class="fas fa-paper-plane"></i>
+                        Заказать
+                    </button>
+                </div>
+                <div class="service-card scroll-reveal" style="animation-delay: 0.2s;">
+                    <div class="service-icon">🏍️</div>
+                    <h3 class="text-2xl font-bold mb-2">Мототехника</h3>
+                    <p class="text-gray-600 mb-4 text-lg">Мотоциклы, квадроциклы, снегоходы</p>
+                    <div class="service-price">от 1 500 ₽</div>
+                    <button onclick="openCalculator()" class="btn btn-primary w-full">
+                        <i class="fas fa-paper-plane"></i>
+                        Заказать
+                    </button>
+                </div>
+                <div class="service-card scroll-reveal" style="animation-delay: 0.3s;">
+                    <div class="service-icon">🚛</div>
+                    <h3 class="text-2xl font-bold mb-2">Грузовики</h3>
+                    <p class="text-gray-600 mb-4 text-lg">Коммерческий транспорт до 10 тонн</p>
+                    <div class="service-price">от 8 000 ₽</div>
+                    <button onclick="openCalculator()" class="btn btn-primary w-full">
+                        <i class="fas fa-paper-plane"></i>
+                        Заказать
+                    </button>
+                </div>
+                <div class="service-card scroll-reveal" style="animation-delay: 0.4s;">
+                    <div class="service-icon">🚌</div>
+                    <h3 class="text-2xl font-bold mb-2">Автобусы</h3>
+                    <p class="text-gray-600 mb-4 text-lg">Микроавтобусы и автобусы</p>
+                    <div class="service-price">от 5 000 ₽</div>
+                    <button onclick="openCalculator()" class="btn btn-primary w-full">
+                        <i class="fas fa-paper-plane"></i>
+                        Заказать
+                    </button>
+                </div>
+                <div class="service-card scroll-reveal" style="animation-delay: 0.5s;">
+                    <div class="service-icon">🏗️</div>
+                    <h3 class="text-2xl font-bold mb-2">Спецтехника</h3>
+                    <p class="text-gray-600 mb-4 text-lg">Тракторы, погрузчики, экскаваторы</p>
+                    <div class="service-price">от 2 600 ₽</div>
+                    <button onclick="openCalculator()" class="btn btn-primary w-full">
+                        <i class="fas fa-paper-plane"></i>
+                        Заказать
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prices Section -->
+    <section id="prices" class="py-24 bg-gradient-to-br from-gray-50 to-white">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="text-center mb-20">
+                <h2 class="text-5xl lg:text-6xl font-bold mb-6">Прозрачные <span style="color: var(--primary);">цены</span></h2>
+                <p class="text-2xl text-gray-600">Без скрытых платежей и сюрпризов</p>
+            </div>
+            <div class="max-w-5xl mx-auto">
+                <div class="price-table scroll-reveal">
+                    <div class="price-row font-bold bg-gradient-to-r from-orange-50 to-transparent text-lg">
+                        <div><i class="fas fa-list-ul mr-2"></i>Тип услуги</div>
+                        <div class="text-right"><i class="fas fa-ruble-sign mr-2"></i>Стоимость</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-car text-orange-600 text-xl"></i>
+                            <span>Эвакуация легковых автомобилей</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 1 500 ₽</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-truck-pickup text-orange-600 text-xl"></i>
+                            <span>Эвакуация внедорожников (джипов)</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 2 400 ₽</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-motorcycle text-orange-600 text-xl"></i>
+                            <span>Эвакуация мототехники</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 1 500 ₽</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-truck text-orange-600 text-xl"></i>
+                            <span>Эвакуация грузовиков</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 8 000 ₽</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-bus text-orange-600 text-xl"></i>
+                            <span>Эвакуация автобусов</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 5 000 ₽</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-tractor text-orange-600 text-xl"></i>
+                            <span>Эвакуация спецтехники</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 2 600 ₽</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-route text-orange-600 text-xl"></i>
+                            <span>Междугородняя эвакуация (за км)</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 40 ₽/км</div>
+                    </div>
+                    <div class="price-row">
+                        <div class="flex items-center gap-3">
+                            <i class="fas fa-hand-holding text-orange-600 text-xl"></i>
+                            <span>Эвакуатор-манипулятор до 3 тонн</span>
+                        </div>
+                        <div class="text-right font-bold text-xl" style="color: var(--primary);">от 9 000 ₽</div>
+                    </div>
+                </div>
+                <div class="text-center mt-12">
+                    <button onclick="openCalculator()" class="btn btn-primary text-xl px-12 py-5">
+                        <i class="fas fa-calculator"></i>
+                        Точный расчет стоимости
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- App Section -->
+    <section id="app" class="py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-orange-600 rounded-full filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-green-600 rounded-full filter blur-3xl opacity-20"></div>
+        
+        <div class="container mx-auto px-6 lg:px-12 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="scroll-reveal">
+                    <h2 class="text-5xl lg:text-6xl font-bold mb-6">
+                        Установите приложение <span style="color: var(--primary);">CarTaxi</span>
+                    </h2>
+                    <p class="text-2xl mb-8 text-gray-300">
+                        Вызов эвакуатора за 2 клика. Отслеживание в реальном времени. 
+                        Специальные акции для пользователей приложения.
+                    </p>
+                    <ul class="space-y-5 mb-10">
+                        <li class="flex items-center gap-4 text-xl">
+                            <span class="text-3xl">✓</span>
+                            <span>Быстрый вызов с картой</span>
+                        </li>
+                        <li class="flex items-center gap-4 text-xl">
+                            <span class="text-3xl">✓</span>
+                            <span>История всех заказов</span>
+                        </li>
+                        <li class="flex items-center gap-4 text-xl">
+                            <span class="text-3xl">✓</span>
+                            <span>Привязка карты для оплаты</span>
+                        </li>
+                        <li class="flex items-center gap-4 text-xl">
+                            <span class="text-3xl">✓</span>
+                            <span>Онлайн трекинг водителя</span>
+                        </li>
+                    </ul>
+                    <div class="flex gap-4 flex-wrap">
+                        <a href="#" class="inline-block transform hover:scale-105 transition">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='60'%3E%3Crect width='200' height='60' rx='12' fill='%23000'/%3E%3Ctext x='100' y='38' font-family='Arial' font-size='18' fill='white' text-anchor='middle' font-weight='bold'%3E%F0%9F%8D%8E App Store%3C/text%3E%3C/svg%3E" alt="App Store" class="h-16">
+                        </a>
+                        <a href="#" class="inline-block transform hover:scale-105 transition">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='60'%3E%3Crect width='200' height='60' rx='12' fill='%2334A853'/%3E%3Ctext x='100' y='38' font-family='Arial' font-size='18' fill='white' text-anchor='middle' font-weight='bold'%3E%F0%9F%A4%96 Google Play%3C/text%3E%3C/svg%3E" alt="Google Play" class="h-16">
+                        </a>
+                    </div>
+                </div>
+                <div class="flex justify-center scroll-reveal" style="animation-delay: 0.2s;">
+                    <div class="relative">
+                        <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-red-600 rounded-3xl blur-2xl opacity-50"></div>
+                        <div class="relative bg-gradient-to-br from-orange-500 to-red-600 w-80 h-[600px] rounded-3xl shadow-2xl p-8 flex flex-col items-center justify-center transform hover:rotate-2 transition-transform duration-500">
+                            <div class="text-8xl mb-6">📱</div>
+                            <div class="text-3xl font-bold mb-2">CarTaxi App</div>
+                            <div class="text-lg opacity-90">Доступно на iOS и Android</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Drivers Section -->
+    <section id="drivers" class="py-24 bg-gradient-to-br from-orange-600 via-orange-500 to-red-600 text-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h60v60H0z' fill='none'/%3E%3Cpath d='M30 0L0 30l30 30 30-30z' fill='rgba(255,255,255,0.05)'/%3E%3C/svg%3E')]"></div>
+        
+        <div class="container mx-auto px-6 lg:px-12 relative z-10">
+            <div class="max-w-5xl mx-auto text-center scroll-reveal">
+                <h2 class="text-5xl lg:text-6xl font-bold mb-6">
+                    Стань водителем-партнером <span style="text-shadow: 0 0 30px rgba(255,255,255,0.5);">CarTaxi</span>
+                </h2>
+                <p class="text-3xl mb-12 font-semibold">
+                    Зарабатывай до 200 000 ₽ в месяц
+                </p>
+                <div class="grid md:grid-cols-3 gap-8 mb-16">
+                    <div class="bg-white/15 backdrop-blur-lg rounded-3xl p-8 transform hover:scale-105 transition">
+                        <div class="text-6xl mb-4">🚗</div>
+                        <h3 class="text-2xl font-bold mb-3">Свободный график</h3>
+                        <p class="text-lg opacity-90">Работай когда удобно</p>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-lg rounded-3xl p-8 transform hover:scale-105 transition">
+                        <div class="text-6xl mb-4">💰</div>
+                        <h3 class="text-2xl font-bold mb-3">Высокий доход</h3>
+                        <p class="text-lg opacity-90">Комиссия всего 15%</p>
+                    </div>
+                    <div class="bg-white/15 backdrop-blur-lg rounded-3xl p-8 transform hover:scale-105 transition">
+                        <div class="text-6xl mb-4">📊</div>
+                        <h3 class="text-2xl font-bold mb-3">Много заказов</h3>
+                        <p class="text-lg opacity-90">Постоянный поток клиентов</p>
+                    </div>
+                </div>
+                <a href="#contact" class="btn bg-white text-orange-600 text-2xl px-16 py-6 hover:shadow-2xl">
+                    <i class="fas fa-user-plus"></i>
+                    Стать партнером
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order with Map Section - НОВАЯ СЕКЦИЯ -->
+    <section id="order" class="py-24 bg-gradient-to-br from-orange-50 to-white">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16">
+                <h2 class="text-5xl lg:text-6xl font-bold mb-6">
+                    <i class="fas fa-map-marked-alt" style="color: var(--primary);"></i>
+                    Заказать <span style="color: var(--primary);">эвакуатор</span>
+                </h2>
+                <p class="text-2xl text-gray-600">Выберите точки на карте и получите мгновенный расчет</p>
+            </div>
+
+            <div class="max-w-7xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+                <div class="grid lg:grid-cols-2">
+                    <!-- Карта -->
+                    <div class="relative h-[600px] bg-gray-200">
+                        <div id="map" class="w-full h-full"></div>
+                        <div class="absolute top-4 left-4 right-4 bg-white rounded-xl shadow-lg p-4 z-10">
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-semibold">Откуда:</span>
+                                    <span id="pickupAddress" class="text-gray-600">Выберите на карте</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm mt-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                                    <span class="font-semibold">Куда:</span>
+                                    <span id="deliveryAddress" class="text-gray-600">Выберите на карте</span>
+                                </div>
+                            </div>
+                            <div class="mt-3 pt-3 border-t">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold">Расстояние:</span>
+                                    <span id="distance" class="text-lg font-bold text-orange-600">0 км</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Форма заказа -->
+                    <div class="p-8 lg:p-12">
+                        <h3 class="text-3xl font-bold mb-8">
+                            <i class="fas fa-file-alt"></i>
+                            Детали заказа
+                        </h3>
+                        <form id="orderForm" class="space-y-6">
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">
+                                    <i class="fas fa-user"></i> Ваше имя *
+                                </label>
+                                <input type="text" id="userName" required class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition" placeholder="Иван Иванов">
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">
+                                    <i class="fas fa-phone"></i> Телефон *
+                                </label>
+                                <input type="tel" id="userPhone" required class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition" placeholder="+7 (999) 123-45-67">
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">
+                                    <i class="fas fa-truck"></i> Тип транспорта *
+                                </label>
+                                <select id="serviceType" required class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition">
+                                    <option value="">Выберите тип</option>
+                                    <option value="light_car" data-price="1500">🚗 Легковой автомобиль - от 1500₽</option>
+                                    <option value="suv" data-price="2400">🚙 Внедорожник - от 2400₽</option>
+                                    <option value="motorcycle" data-price="1500">🏍️ Мототехника - от 1500₽</option>
+                                    <option value="truck" data-price="8000">🚛 Грузовик - от 8000₽</option>
+                                    <option value="bus" data-price="5000">🚌 Автобус - от 5000₽</option>
+                                    <option value="special" data-price="2600">🏗️ Спецтехника - от 2600₽</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">
+                                    <i class="fas fa-car"></i> Марка и модель авто
+                                </label>
+                                <input type="text" id="vehicleInfo" class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition" placeholder="Toyota Camry 2020">
+                            </div>
+
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">
+                                    <i class="fas fa-comment"></i> Комментарий
+                                </label>
+                                <textarea id="orderNotes" rows="3" class="w-full px-5 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition" placeholder="Дополнительная информация..."></textarea>
+                            </div>
+
+                            <div class="bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-2xl border-2 border-orange-200">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-lg font-semibold text-gray-700">Базовая стоимость:</span>
+                                    <span id="basePrice" class="text-2xl font-bold text-orange-600">0 ₽</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-lg font-semibold text-gray-700">За расстояние:</span>
+                                    <span id="distancePrice" class="text-2xl font-bold text-orange-600">0 ₽</span>
+                                </div>
+                                <div class="border-t-2 border-orange-300 my-3 pt-3">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-xl font-bold text-gray-800">Итого:</span>
+                                        <span id="totalOrderPrice" class="text-4xl font-bold text-orange-600">0 ₽</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-full text-xl py-5">
+                                <i class="fas fa-paper-plane"></i>
+                                Отправить заявку водителям
+                            </button>
+
+                            <p class="text-center text-sm text-gray-600">
+                                <i class="fas fa-shield-check"></i>
+                                Ваша заявка будет отправлена ближайшим водителям.<br>
+                                С вашей карты будет списана <strong>комиссия 15%</strong> после выполнения заказа.
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-24 bg-white">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-20">
+                    <h2 class="text-5xl lg:text-6xl font-bold mb-6">Свяжитесь с <span style="color: var(--primary);">нами</span></h2>
+                    <p class="text-2xl text-gray-600">Ответим на все вопросы 24/7</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-16">
+                    <div class="scroll-reveal">
+                        <h3 class="text-3xl font-bold mb-8">Контактная информация</h3>
+                        <div class="space-y-8">
+                            <div class="flex items-start gap-5">
+                                <div class="text-4xl">
+                                    <i class="fas fa-phone-alt" style="color: var(--primary);"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-2">Телефон</h4>
+                                    <a href="tel:88003335181" class="text-3xl font-bold hover:text-orange-600 transition" style="color: var(--primary);">
+                                        8 800 333 51 81
+                                    </a>
+                                    <p class="text-gray-600 mt-1">Круглосуточно, бесплатно по России</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-5">
+                                <div class="text-4xl">
+                                    <i class="fas fa-envelope" style="color: var(--primary);"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-2">Email</h4>
+                                    <a href="mailto:info@cartaxi.io" class="text-xl hover:text-orange-600 transition" style="color: var(--primary);">
+                                        info@cartaxi.io
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-5">
+                                <div class="text-4xl">
+                                    <i class="fab fa-telegram" style="color: var(--primary);"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-2">Telegram</h4>
+                                    <a href="https://t.me/cartaxi" class="text-xl hover:text-orange-600 transition" style="color: var(--primary);">
+                                        @cartaxi
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-5">
+                                <div class="text-4xl">
+                                    <i class="fas fa-clock" style="color: var(--primary);"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xl mb-2">Режим работы</h4>
+                                    <p class="text-gray-600 text-lg">
+                                        <strong>24 часа в сутки</strong><br>
+                                        7 дней в неделю<br>
+                                        365 дней в году
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scroll-reveal" style="animation-delay: 0.2s;">
+                        <h3 class="text-3xl font-bold mb-8">Быстрая заявка</h3>
+                        <form id="contactForm" class="space-y-6">
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">Ваше имя</label>
+                                <input type="text" required class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">Телефон</label>
+                                <input type="tel" required class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">Тип транспорта</label>
+                                <select class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition">
+                                    <option>Легковой автомобиль</option>
+                                    <option>Внедорожник</option>
+                                    <option>Мототехника</option>
+                                    <option>Грузовик</option>
+                                    <option>Автобус</option>
+                                    <option>Спецтехника</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-3 text-lg">Комментарий</label>
+                                <textarea rows="4" class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-full text-xl py-5">
+                                <i class="fas fa-paper-plane"></i>
+                                Отправить заявку
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-6 lg:px-12">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
+                <div>
+                    <div class="text-3xl font-bold mb-6 flex items-center gap-2">
+                        <i class="fas fa-truck-pickup" style="color: var(--primary);"></i>
+                        CarTaxi
+                    </div>
+                    <p class="text-gray-400 text-lg">Служба эвакуации №1 в России. Работаем с 2017 года.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xl mb-6">Услуги</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#services" class="hover:text-white transition text-lg">Легковые авто</a></li>
+                        <li><a href="#services" class="hover:text-white transition text-lg">Внедорожники</a></li>
+                        <li><a href="#services" class="hover:text-white transition text-lg">Мототехника</a></li>
+                        <li><a href="#services" class="hover:text-white transition text-lg">Грузовики</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xl mb-6">Компания</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#app" class="hover:text-white transition text-lg">Приложение</a></li>
+                        <li><a href="#drivers" class="hover:text-white transition text-lg">Водителям</a></li>
+                        <li><a href="#contact" class="hover:text-white transition text-lg">Контакты</a></li>
+                        <li><a href="#" class="hover:text-white transition text-lg">О нас</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xl mb-6">Контакты</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="tel:88003335181" class="hover:text-white transition text-lg">8 800 333 51 81</a></li>
+                        <li><a href="mailto:info@cartaxi.io" class="hover:text-white transition text-lg">info@cartaxi.io</a></li>
+                        <li><a href="https://t.me/cartaxi" class="hover:text-white transition text-lg">@cartaxi</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-lg">
+                <p>&copy; 2017-2025 CarTaxi. Все права защищены. ООО "СТО"</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Calculator Modal -->
+    <div id="calculatorModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCalculator()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="text-4xl font-bold mb-8 text-center">
+                <i class="fas fa-calculator" style="color: var(--primary);"></i>
+                Калькулятор стоимости
+            </h2>
+            
+            <form id="calcForm" class="space-y-6">
+                <div>
+                    <label class="block font-bold mb-4 text-lg">Тип транспорта</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="flex items-center gap-3 p-5 border-2 rounded-xl cursor-pointer hover:border-orange-500 transition bg-gray-50 hover:bg-orange-50">
+                            <input type="radio" name="vehicle" value="light_car" data-price="1500" checked class="w-5 h-5">
+                            <span class="text-lg">🚗 Легковой</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-5 border-2 rounded-xl cursor-pointer hover:border-orange-500 transition bg-gray-50 hover:bg-orange-50">
+                            <input type="radio" name="vehicle" value="suv" data-price="2400" class="w-5 h-5">
+                            <span class="text-lg">🚙 Внедорожник</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-5 border-2 rounded-xl cursor-pointer hover:border-orange-500 transition bg-gray-50 hover:bg-orange-50">
+                            <input type="radio" name="vehicle" value="motorcycle" data-price="1500" class="w-5 h-5">
+                            <span class="text-lg">🏍️ Мототехника</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-5 border-2 rounded-xl cursor-pointer hover:border-orange-500 transition bg-gray-50 hover:bg-orange-50">
+                            <input type="radio" name="vehicle" value="truck" data-price="8000" class="w-5 h-5">
+                            <span class="text-lg">🚛 Грузовик</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block font-bold mb-3 text-lg">
+                        <i class="fas fa-route" style="color: var(--primary);"></i>
+                        Расстояние (км)
+                    </label>
+                    <input type="number" id="distance" value="10" min="0" class="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-orange-500 focus:outline-none transition">
+                </div>
+                
+                <div>
+                    <label class="flex items-center gap-4 cursor-pointer p-4 bg-orange-50 rounded-xl">
+                        <input type="checkbox" id="urgent" class="w-6 h-6">
+                        <span class="font-bold text-lg">
+                            <i class="fas fa-bolt" style="color: var(--primary);"></i>
+                            Срочная подача (+500 ₽)
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="bg-gradient-to-br from-orange-50 to-red-50 p-8 rounded-2xl border-2 border-orange-200">
+                    <div class="text-xl font-bold mb-3 text-gray-700">Итоговая стоимость:</div>
+                    <div class="text-5xl font-bold" style="color: var(--primary);" id="totalPrice">2 100 ₽</div>
+                </div>
+                
+                <button type="button" onclick="submitCalculator()" class="btn btn-primary w-full text-xl py-5">
+                    <i class="fas fa-check-circle"></i>
+                    Заказать эвакуатор
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                nav.classList.remove('transparent');
+            } else {
+                nav.classList.add('transparent');
+            }
+        });
+
+        // Scroll reveal animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Calculator
+        function openCalculator() {
+            document.getElementById('calculatorModal').classList.add('active');
+            calculatePrice();
+        }
+
+        function closeCalculator() {
+            document.getElementById('calculatorModal').classList.remove('active');
+        }
+
+        function calculatePrice() {
+            const vehicle = document.querySelector('input[name="vehicle"]:checked');
+            const distance = document.getElementById('distance').value || 0;
+            const urgent = document.getElementById('urgent').checked;
+            
+            const basePrice = parseInt(vehicle.dataset.price);
+            const distancePrice = Math.max(0, distance - 10) * 40;
+            const urgentPrice = urgent ? 500 : 0;
+            
+            const total = basePrice + distancePrice + urgentPrice;
+            
+            document.getElementById('totalPrice').textContent = total.toLocaleString('ru-RU') + ' ₽';
+        }
+
+        // Update price on change
+        document.querySelectorAll('input[name="vehicle"]').forEach(input => {
+            input.addEventListener('change', calculatePrice);
+        });
+        
+        document.getElementById('distance').addEventListener('input', calculatePrice);
+        document.getElementById('urgent').addEventListener('change', calculatePrice);
+
+        function submitCalculator() {
+            alert('🎉 Спасибо! Ваша заявка принята.\n\n📞 Мы свяжемся с вами в течение 2 минут.\n\n🚗 CarTaxi - с нами надежно!');
+            closeCalculator();
+        }
+
+        // Contact form
+        document.getElementById('contactForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('✅ Спасибо! Ваша заявка принята.\n\n📱 Мы свяжемся с вами в ближайшее время.\n\nCarTaxi - всегда на связи! 🚗');
+            e.target.reset();
+        });
+
+        // Close modal on outside click
+        document.getElementById('calculatorModal').addEventListener('click', (e) => {
+            if (e.target.id === 'calculatorModal') {
+                closeCalculator();
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // ============================================================
+        // GOOGLE MAPS - Интерактивная карта для заказа
+        // ============================================================
+        
+        let map;
+        let pickupMarker;
+        let deliveryMarker;
+        let directionsService;
+        let directionsRenderer;
+        let pickupLocation = null;
+        let deliveryLocation = null;
+
+        function initMap() {
+            // Центр Москвы по умолчанию
+            const defaultCenter = { lat: 55.751244, lng: 37.618423 };
+
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: defaultCenter,
+                zoom: 12,
+                styles: [
+                    {
+                        featureType: 'poi',
+                        elementType: 'labels',
+                        stylers: [{ visibility: 'off' }]
+                    }
+                ]
+            });
+
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer({
+                map: map,
+                suppressMarkers: false,
+                polylineOptions: {
+                    strokeColor: '#FF6B00',
+                    strokeWeight: 5
+                }
+            });
+
+            // Клик по карте для установки точек
+            map.addListener('click', (event) => {
+                if (!pickupLocation) {
+                    setPickupLocation(event.latLng);
+                } else if (!deliveryLocation) {
+                    setDeliveryLocation(event.latLng);
+                } else {
+                    // Сброс и новый выбор
+                    clearLocations();
+                    setPickupLocation(event.latLng);
+                }
+            });
+
+            // Попытка определить текущее местоположение
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        map.setCenter(pos);
+                    },
+                    () => {
+                        console.log('Геолокация недоступна');
+                    }
+                );
+            }
+        }
+
+        function setPickupLocation(latLng) {
+            pickupLocation = latLng;
+            
+            if (pickupMarker) {
+                pickupMarker.setMap(null);
+            }
+            
+            pickupMarker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: 'Откуда',
+                icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png'
+                },
+                animation: google.maps.Animation.DROP
+            });
+
+            getAddressFromLatLng(latLng, 'pickup');
+            
+            if (deliveryLocation) {
+                calculateRoute();
+            }
+        }
+
+        function setDeliveryLocation(latLng) {
+            deliveryLocation = latLng;
+            
+            if (deliveryMarker) {
+                deliveryMarker.setMap(null);
+            }
+            
+            deliveryMarker = new google.maps.Marker({
+                position: latLng,
+                map: map,
+                title: 'Куда',
+                icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+                },
+                animation: google.maps.Animation.DROP
+            });
+
+            getAddressFromLatLng(latLng, 'delivery');
+            
+            if (pickupLocation) {
+                calculateRoute();
+            }
+        }
+
+        function clearLocations() {
+            pickupLocation = null;
+            deliveryLocation = null;
+            
+            if (pickupMarker) pickupMarker.setMap(null);
+            if (deliveryMarker) deliveryMarker.setMap(null);
+            if (directionsRenderer) directionsRenderer.setDirections({routes: []});
+            
+            document.getElementById('pickupAddress').textContent = 'Выберите на карте';
+            document.getElementById('deliveryAddress').textContent = 'Выберите на карте';
+            document.getElementById('distance').textContent = '0 км';
+            
+            calculateOrderPrice();
+        }
+
+        function getAddressFromLatLng(latLng, type) {
+            const geocoder = new google.maps.Geocoder();
+            
+            geocoder.geocode({ location: latLng }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const address = results[0].formatted_address;
+                    const elementId = type === 'pickup' ? 'pickupAddress' : 'deliveryAddress';
+                    document.getElementById(elementId).textContent = address;
+                }
+            });
+        }
+
+        function calculateRoute() {
+            if (!pickupLocation || !deliveryLocation) return;
+
+            const request = {
+                origin: pickupLocation,
+                destination: deliveryLocation,
+                travelMode: 'DRIVING'
+            };
+
+            directionsService.route(request, (result, status) => {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    
+                    const route = result.routes[0];
+                    const distanceMeters = route.legs[0].distance.value;
+                    const distanceKm = (distanceMeters / 1000).toFixed(1);
+                    
+                    document.getElementById('distance').textContent = distanceKm + ' км';
+                    
+                    calculateOrderPrice();
+                }
+            });
+        }
+
+        function calculateOrderPrice() {
+            const serviceSelect = document.getElementById('serviceType');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const basePrice = parseInt(selectedOption.dataset.price || 0);
+            
+            const distanceText = document.getElementById('distance').textContent;
+            const distance = parseFloat(distanceText) || 0;
+            
+            const pricePerKm = 40;
+            const distancePrice = Math.max(0, distance - 10) * pricePerKm;
+            
+            const totalPrice = basePrice + distancePrice;
+            
+            document.getElementById('basePrice').textContent = basePrice.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('distancePrice').textContent = Math.round(distancePrice).toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('totalOrderPrice').textContent = Math.round(totalPrice).toLocaleString('ru-RU') + ' ₽';
+        }
+
+        // Обновление цены при изменении типа транспорта
+        document.addEventListener('DOMContentLoaded', () => {
+            const serviceSelect = document.getElementById('serviceType');
+            if (serviceSelect) {
+                serviceSelect.addEventListener('change', calculateOrderPrice);
+            }
+
+            // Инициализация карты
+            if (typeof google !== 'undefined') {
+                initMap();
+            }
+        });
+
+        // ============================================================
+        // ОТПРАВКА ЗАКАЗА В BACKEND API
+        // ============================================================
+        
+        const API_URL = 'http://localhost:8000/api';
+
+        document.getElementById('orderForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (!pickupLocation || !deliveryLocation) {
+                alert('❌ Пожалуйста, выберите точки отправления и назначения на карте!');
+                return;
+            }
+
+            const formData = {
+                user_phone: document.getElementById('userPhone').value,
+                service_id: document.getElementById('serviceType').value,
+                order_type: 'urgent',
+                pickup_address: document.getElementById('pickupAddress').textContent,
+                pickup_latitude: pickupLocation.lat(),
+                pickup_longitude: pickupLocation.lng(),
+                delivery_address: document.getElementById('deliveryAddress').textContent,
+                delivery_latitude: deliveryLocation.lat(),
+                delivery_longitude: deliveryLocation.lng(),
+                vehicle_info: document.getElementById('vehicleInfo').value,
+                additional_notes: document.getElementById('orderNotes').value
+            };
+
+            try {
+                // Показываем индикатор загрузки
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Отправка...';
+                submitBtn.disabled = true;
+
+                const response = await fetch(`${API_URL}/orders/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    const order = await response.json();
+                    
+                    alert(`✅ Заказ успешно создан!\n\n` +
+                          `📋 Номер заказа: ${order.id}\n` +
+                          `💰 Стоимость: ${order.total_price}₽\n` +
+                          `📍 От: ${formData.pickup_address}\n` +
+                          `🏁 До: ${formData.delivery_address}\n\n` +
+                          `🚗 Ваша заявка отправлена ближайшим водителям!\n` +
+                          `📱 Ожидайте звонка в течение 2-5 минут.`);
+                    
+                    // Очищаем форму
+                    e.target.reset();
+                    clearLocations();
+                    
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                } else {
+                    throw new Error('Ошибка создания заказа');
+                }
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('❌ Произошла ошибка при создании заказа.\n\n' +
+                      'Пожалуйста, попробуйте еще раз или позвоните нам:\n' +
+                      '📞 8 800 333 51 81');
+                
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Кнопка очистки карты
+        const addClearButton = () => {
+            const mapDiv = document.getElementById('map');
+            if (mapDiv && map) {
+                const clearBtn = document.createElement('button');
+                clearBtn.innerHTML = '<i class="fas fa-redo"></i> Очистить';
+                clearBtn.className = 'btn btn-secondary';
+                clearBtn.style.cssText = 'position: absolute; bottom: 20px; right: 20px; z-index: 1000; padding: 0.75rem 1.5rem; font-size: 0.9rem;';
+                clearBtn.onclick = clearLocations;
+                mapDiv.style.position = 'relative';
+                mapDiv.appendChild(clearBtn);
+            }
+        };
+
+        // Добавляем кнопку очистки после загрузки карты
+        setTimeout(addClearButton, 1000);
+    </script>
+</body>
+</html>
