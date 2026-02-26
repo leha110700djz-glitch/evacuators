@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Landing Page",
+      "runtimeExecutable": "C:\\Users\\A\\Desktop\\наработки\\сайт тарелки\\ПОЛНАЯ_CRM_СИСТЕМА\\venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "http.server", "3000", "--directory", "landing"],
+      "port": 3000
+    },
+    {
+      "name": "Backend API",
+      "runtimeExecutable": "C:\\Users\\A\\Desktop\\наработки\\сайт тарелки\\ПОЛНАЯ_CRM_СИСТЕМА\\venv\\Scripts\\python.exe",
+      "runtimeArgs": ["-m", "uvicorn", "эвакуаторы.backend.app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"],
+      "port": 8000
+    },
+    {
+      "name": "Docker Services",
+      "runtimeExecutable": "docker-compose",
+      "runtimeArgs": ["up"],
+      "port": 5432
+    },
+    {
+      "name": "Flutter Web",
+      "runtimeExecutable": "flutter",
+      "runtimeArgs": ["run", "-d", "web", "--web-port", "8081"],
+      "port": 8081
+    }
+  ]
+}
