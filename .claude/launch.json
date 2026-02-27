@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "Landing Page",
-      "runtimeExecutable": "C:\\Users\\A\\Desktop\\наработки\\сайт тарелки\\ПОЛНАЯ_CRM_СИСТЕМА\\venv\\Scripts\\python.exe",
-      "runtimeArgs": ["-m", "http.server", "3000", "--directory", "landing"],
+      "runtimeExecutable": "C:\\Users\\A\\AppData\\Local\\Temp\\caddy\\caddy.exe",
+      "runtimeArgs": ["file-server", "--root", "C:\\Users\\A\\Desktop\\9253~1\\40CF~1\\landing", "--listen", ":3000"],
       "port": 3000
     },
     {

@@ -573,3 +573,8 @@ function calculatePrice() {
   <p>Дата создания: 24 ноября 2025</p>
 </div>
 
+
+
+
+
+

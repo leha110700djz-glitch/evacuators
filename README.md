@@ -1,9 +1,11 @@
 # 🚗 CarTaxi - Платформа вызова эвакуаторов
 
-![CarTaxi Logo](https://img.shields.io/badge/CarTaxi-v2.0.0-orange?style=for-the-badge)
+![CarTaxi Logo](https://img.shields.io/badge/CarTaxi-v3.0.0-orange?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=for-the-badge&logo=python)
 ![Flutter](https://img.shields.io/badge/Flutter-3.27+-02569B?style=for-the-badge&logo=flutter)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green?style=for-the-badge&logo=fastapi)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-green?style=for-the-badge&logo=fastapi)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success?style=for-the-badge)
+![Rating](https://img.shields.io/badge/Rating-8.5%2F10-yellow?style=for-the-badge)
 
 > Современная платформа для вызова эвакуаторов с интеграцией для водителей-партнеров, системой комиссий и автоматическим распределением заказов.
 
