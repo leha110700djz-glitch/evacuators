@@ -1,0 +1,82 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.27.4'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        working-directory: ./эвакуаторы
+        run: flutter pub get
+
+      - name: Build APK (release)
+        working-directory: ./эвакуаторы
+        run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Copy APK to landing
+        run: |
+          mkdir -p landing/app
+          cp эвакуаторы/build/app/outputs/flutter-apk/app-release.apk \
+             landing/app/evakuator-seyhas.apk
+
+      - name: Upload APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: evakuator-seyhas-apk
+          path: эвакуаторы/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: apk-${{ github.run_number }}
+          name: "Эвакуатор Сейчас v1.1 (build ${{ github.run_number }})"
+          body: |
+            ## 📱 Приложение Эвакуатор Сейчас
+
+            Скачайте APK ниже и установите на Android устройство.
+
+            - Яндекс.Карты — выбор точек подачи и назначения
+            - Telegram-уведомления для диспетчера
+            - Вызов одним нажатием
+            - Работа без интернета (звонок)
+          files: |
+            эвакуаторы/build/app/outputs/flutter-apk/app-release.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit APK to landing/app
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add landing/app/evakuator-seyhas.apk || true
+          git diff --staged --quiet || git commit -m "ci: update APK build #${{ github.run_number }}"
+          git push || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
