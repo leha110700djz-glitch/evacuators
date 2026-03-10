@@ -5,12 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#FF6B00">
-    <title>Эвакуатор Сейчас — Вызов эвакуатора 24/7 🚛</title>
-    <meta name="description" content="Вызов эвакуатора 24/7. Телефон: 8 (977) 262-81-82. Честные цены от 1500₽. Подача за 15 минут. Рейтинг 4.9★.">
-    <meta property="og:title" content="Эвакуатор Сейчас — Быстрая помощь 24/7">
-    <meta property="og:description" content="Вызов эвакуатора 24/7. Звоните: 8 (977) 262-81-82. От 1500₽. Подача 15 минут.">
+    <title>Везунчик — Эвакуатор в Москве 24/7 🚛</title>
+    <meta name="description" content="Везунчик — вызов эвакуатора 24/7 в Москве. Тел: 8 (977) 262-81-82. Цены от 1200₽, онлайн-расчёт. Подача 15 минут. Бонусная программа. Скидки 10–15%.">
+    <meta property="og:title" content="Везунчик — Эвакуатор в Москве 24/7">
+    <meta property="og:description" content="Везунчик: эвакуатор 24/7. Звоните: 8 (977) 262-81-82. От 1200₽. Подача 15 мин. Бонусы, скидки, страховка.">
     <meta property="og:image" content="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80">
     <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -657,6 +658,23 @@
         .form-input:focus { border-color: var(--primary); }
         .form-label { display: block; font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--secondary); }
 
+        /* vehicle type buttons */
+        .veh-btn {
+            background: #F8FAFC;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            padding: 8px 4px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: all 0.2s;
+            line-height: 1.4;
+            color: var(--text);
+            font-family: inherit;
+        }
+        .veh-btn:hover { border-color: var(--primary); background: #FFF7ED; transform: translateY(-1px); }
+        .veh-btn.active { border-color: var(--primary); background: rgba(255,107,0,0.08); color: var(--primary); font-weight: 700; }
+
         /* price summary */
         .price-summary {
             background: linear-gradient(135deg, #FFF7ED, #FFF1E6);
@@ -774,6 +792,9 @@
             .hero-title { font-size: 2.4rem; }
             .live-num { font-size: 2rem; }
             .fab-group { bottom: 1.2rem; right: 1.2rem; }
+            .order-grid { grid-template-columns: 1fr !important; }
+            .order-grid > div:first-child { min-height: 300px !important; }
+            .order-grid > div:last-child { max-height: none !important; }
         }
     </style>
 </head>
@@ -786,7 +807,7 @@
 <nav id="navbar" class="transparent">
     <div class="nav-container">
         <a href="#" class="nav-logo">
-            <i class="fas fa-truck-pickup"></i> Эвакуатор Сейчас
+            <i class="fas fa-truck-pickup"></i> Везунчик
         </a>
         <ul class="nav-links">
             <li><a href="#how" class="nav-link">Как работает</a></li>
@@ -881,10 +902,12 @@
                         <div>
                             <label class="form-label">Тип транспорта</label>
                             <select id="quickType" class="form-input">
-                                <option value="1500">🚗 Легковой — от 1 500 ₽</option>
-                                <option value="2400">🚙 Внедорожник — от 2 400 ₽</option>
-                                <option value="1500">🏍️ Мотоцикл — от 1 500 ₽</option>
-                                <option value="8000">🚛 Грузовик — от 8 000 ₽</option>
+                                <option value="1200">🚗 Легковой — от 1 200 ₽</option>
+                                <option value="1800">🚙 Внедорожник — от 1 800 ₽</option>
+                                <option value="1200">🏍️ Мотоцикл — от 1 200 ₽</option>
+                                <option value="3500">🚛 Грузовик — от 3 500 ₽</option>
+                                <option value="4500">🚌 Автобус — от 4 500 ₽</option>
+                                <option value="8000">🏗️ Манипулятор — от 8 000 ₽</option>
                             </select>
                         </div>
                         <button onclick="submitQuickOrder()" class="btn btn-primary w-full" style="padding:1rem;">
@@ -897,6 +920,138 @@
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+<!-- ─── ORDER WITH MAP (hero + order unified) ─── -->
+<section id="order" style="background:#F0F4F8; padding-bottom:3rem;">
+    <div style="max-width:1440px; margin:0 auto; padding:0 1.5rem;">
+        <div class="text-center" style="padding:3rem 0 2rem;">
+            <div class="section-tag">Заказ онлайн</div>
+            <h2 class="section-title mt-2">Вызвать <span class="accent">эвакуатор</span></h2>
+            <p class="section-sub mt-3">Укажите точки на карте — получите точную стоимость мгновенно</p>
+        </div>
+        <div style="display:grid; grid-template-columns:3fr 2fr; border-radius:24px; overflow:hidden; box-shadow:0 24px 80px rgba(0,0,0,0.12); background:#fff; min-height:580px;" class="order-grid">
+            <!-- LEFT: Map 60% -->
+            <div style="position:relative; min-height:520px;">
+                <div id="map" style="width:100%; height:100%; min-height:520px;"></div>
+                <div style="position:absolute; top:1rem; left:1rem; right:1rem; background:rgba(255,255,255,0.97); border-radius:14px; box-shadow:0 4px 20px rgba(0,0,0,0.14); padding:12px 14px; z-index:10; backdrop-filter:blur(8px);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <div style="width:10px; height:10px; background:#22C55E; border-radius:50%; flex-shrink:0;"></div>
+                        <input id="pickupInput" type="text" placeholder="Откуда — введите адрес или нажмите на карту" autocomplete="off"
+                            style="flex:1; border:1.5px solid #E2E8F0; border-radius:8px; padding:7px 11px; font-size:13px; outline:none; font-family:inherit; transition:border-color .2s;"
+                            onfocus="this.style.borderColor='#22C55E'" onblur="this.style.borderColor='#E2E8F0'">
+                    </div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                        <div style="width:10px; height:10px; background:#EF4444; border-radius:50%; flex-shrink:0;"></div>
+                        <input id="deliveryInput" type="text" placeholder="Куда — введите адрес или нажмите на карту" autocomplete="off"
+                            style="flex:1; border:1.5px solid #E2E8F0; border-radius:8px; padding:7px 11px; font-size:13px; outline:none; font-family:inherit; transition:border-color .2s;"
+                            onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#E2E8F0'">
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding-top:7px; border-top:1px solid #F1F5F9; font-size:13px;">
+                        <span style="color:#64748B; font-weight:600;">📏 Расстояние: <span id="distance" style="color:#FF6B00; font-weight:800;">0 км</span></span>
+                        <button type="button" onclick="clearYLocations()" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:12px; padding:2px 6px; border-radius:4px;">✕ Сбросить</button>
+                    </div>
+                </div>
+            </div>
+            <!-- RIGHT: Form 40% -->
+            <div style="border-left:1px solid #F1F5F9; padding:1.8rem; overflow-y:auto; max-height:580px;">
+                <h3 style="font-size:1.3rem; font-weight:800; margin-bottom:1rem; color:#1E293B;">Оформить заказ</h3>
+                <form id="orderForm">
+                    <!-- Vehicle type buttons -->
+                    <div style="margin-bottom:1rem;">
+                        <div style="font-weight:700; font-size:13px; margin-bottom:8px; color:#475569;">Тип транспорта</div>
+                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px;">
+                            <button type="button" data-type="light_car" data-base="1200" data-km="55" class="veh-btn active" onclick="selectVehicle(this)">🚗<br><span style="font-size:10px;">Легковой</span><br><span style="font-size:10px; color:#FF6B00;">от 1200₽</span></button>
+                            <button type="button" data-type="suv" data-base="1800" data-km="65" class="veh-btn" onclick="selectVehicle(this)">🚙<br><span style="font-size:10px;">Внедорожник</span><br><span style="font-size:10px; color:#FF6B00;">от 1800₽</span></button>
+                            <button type="button" data-type="motorcycle" data-base="1200" data-km="50" class="veh-btn" onclick="selectVehicle(this)">🏍️<br><span style="font-size:10px;">Мотоцикл</span><br><span style="font-size:10px; color:#FF6B00;">от 1200₽</span></button>
+                            <button type="button" data-type="truck" data-base="3500" data-km="90" class="veh-btn" onclick="selectVehicle(this)">🚛<br><span style="font-size:10px;">Грузовик</span><br><span style="font-size:10px; color:#FF6B00;">от 3500₽</span></button>
+                            <button type="button" data-type="bus" data-base="4500" data-km="100" class="veh-btn" onclick="selectVehicle(this)">🚌<br><span style="font-size:10px;">Автобус</span><br><span style="font-size:10px; color:#FF6B00;">от 4500₽</span></button>
+                            <button type="button" data-type="special" data-base="8000" data-km="120" class="veh-btn" onclick="selectVehicle(this)">🏗️<br><span style="font-size:10px;">Манипулятор</span><br><span style="font-size:10px; color:#FF6B00;">от 8000₽</span></button>
+                        </div>
+                        <input type="hidden" id="vehicleTypeInput" value="light_car">
+                    </div>
+                    <!-- Price breakdown -->
+                    <div class="price-summary" style="margin-bottom:0.9rem; font-size:13px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                            <span style="color:#64748B;">Базовая (до 15 км):</span>
+                            <span id="basePrice" style="font-weight:700; color:#FF6B00;">1 200 ₽</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:3px;">
+                            <span style="color:#64748B;">За расстояние:</span>
+                            <span id="distancePrice" style="font-weight:700; color:#FF6B00;">0 ₽</span>
+                        </div>
+                        <div id="nightRow" style="display:none; justify-content:space-between; margin-bottom:3px; background:rgba(255,107,0,0.05); border-radius:6px; padding:2px 4px;">
+                            <span style="color:#64748B;">🌙 Ночной тариф (+20%):</span>
+                            <span id="nightPrice" style="font-weight:700; color:#FF6B00;">0 ₽</span>
+                        </div>
+                        <div id="promoRow" style="display:none; justify-content:space-between; margin-bottom:3px;">
+                            <span style="color:#64748B;">🎁 Промокод (<span id="promoName" style="font-weight:700; color:#FF6B00;"></span>):</span>
+                            <span id="promoDiscount" style="font-weight:700; color:#22C55E;"></span>
+                        </div>
+                        <div id="bonusRow" style="display:none; justify-content:space-between; margin-bottom:3px;">
+                            <span style="color:#64748B;">⭐ Бонусы:</span>
+                            <span id="bonusDiscount" style="font-weight:700; color:#22C55E;"></span>
+                        </div>
+                        <div style="border-top:1.5px solid rgba(255,107,0,0.2); padding-top:6px; display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                            <span style="font-weight:800; font-size:0.95rem; color:#1E293B;">ИТОГО:</span>
+                            <span id="totalOrderPrice" style="font-size:1.5rem; font-weight:900; color:#FF6B00;">1 200 ₽</span>
+                        </div>
+                        <p style="font-size:11px; color:#94A3B8; text-align:center; margin-top:4px;">+1 балл за каждые 10₽ заказа ⭐</p>
+                    </div>
+                    <!-- Promo code -->
+                    <div style="margin-bottom:0.7rem;">
+                        <div style="display:flex; gap:6px;">
+                            <input type="text" id="promoInput" placeholder="Промокод: ВЕЗУНЧИК / ПЕРВЫЙ / НОЧЬ"
+                                style="flex:1; border:1.5px solid #E2E8F0; border-radius:9px; padding:8px 11px; font-size:12px; outline:none; font-family:inherit; text-transform:uppercase; letter-spacing:0.5px;">
+                            <button type="button" onclick="applyPromo()"
+                                style="background:var(--primary); color:white; border:none; border-radius:9px; padding:8px 13px; font-weight:700; cursor:pointer; font-size:12px; white-space:nowrap;">
+                                Применить
+                            </button>
+                        </div>
+                        <div id="promoMessage" style="font-size:11px; margin-top:3px; min-height:16px;"></div>
+                    </div>
+                    <!-- Bonus balance -->
+                    <div id="bonusBalance" style="background:linear-gradient(135deg,#FFF7ED,#FFF1E6); border:1px solid rgba(255,107,0,0.15); border-radius:10px; padding:8px 12px; margin-bottom:0.8rem; font-size:13px; display:flex; justify-content:space-between; align-items:center;">
+                        <span style="color:#64748B;">⭐ Ваши бонусы: <strong id="bonusCount" style="color:#FF6B00;">0</strong> баллов</span>
+                        <button type="button" id="useBonusBtn" onclick="toggleBonuses()"
+                            style="background:none; border:1.5px solid var(--primary); border-radius:7px; padding:3px 9px; color:var(--primary); cursor:pointer; font-size:11px; font-weight:700;">
+                            Применить
+                        </button>
+                    </div>
+                    <!-- Contact fields -->
+                    <div style="margin-bottom:0.6rem;">
+                        <input type="text" id="userName" placeholder="Ваше имя *" required
+                            style="width:100%; border:1.5px solid #E2E8F0; border-radius:9px; padding:9px 13px; font-size:14px; outline:none; font-family:inherit; transition:border-color .2s;"
+                            onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#E2E8F0'">
+                    </div>
+                    <div style="margin-bottom:0.6rem;">
+                        <input type="tel" id="userPhone" placeholder="Телефон +7 (999) 123-45-67 *" required
+                            style="width:100%; border:1.5px solid #E2E8F0; border-radius:9px; padding:9px 13px; font-size:14px; outline:none; font-family:inherit; transition:border-color .2s;"
+                            onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#E2E8F0'">
+                    </div>
+                    <div style="margin-bottom:0.6rem;">
+                        <input type="text" id="vehicleInfo" placeholder="Марка, модель авто"
+                            style="width:100%; border:1.5px solid #E2E8F0; border-radius:9px; padding:9px 13px; font-size:14px; outline:none; font-family:inherit; transition:border-color .2s;"
+                            onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#E2E8F0'">
+                    </div>
+                    <div style="margin-bottom:0.9rem;">
+                        <textarea id="orderComment" rows="2" placeholder="Комментарий (ситуация, особенности...)"
+                            style="width:100%; border:1.5px solid #E2E8F0; border-radius:9px; padding:9px 13px; font-size:14px; outline:none; font-family:inherit; resize:none; transition:border-color .2s;"
+                            onfocus="this.style.borderColor='#FF6B00'" onblur="this.style.borderColor='#E2E8F0'"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; padding:0.95rem; font-size:1rem; border-radius:12px;">
+                        <i class="fas fa-paper-plane"></i> Вызвать эвакуатор
+                    </button>
+                    <p style="text-align:center; font-size:11px; color:#94A3B8; margin-top:8px;">
+                        <i class="fas fa-shield-check" style="color:#22C55E;"></i> Перезвоним в течение 2 минут
+                    </p>
+                </form>
+            </div>
+        </div>
+        <p style="text-align:center; font-size:12px; color:#94A3B8; padding-top:1rem;">
+            🌙 Ночной тариф (22:00–07:00): +20% · ⭐ Бонусы: 1₽ = 1 балл · 🎁 Промокод: ВЕЗУНЧИК (−15%), ПЕРВЫЙ (−10%), НОЧЬ (−10%)
+        </p>
     </div>
 </section>
 
@@ -949,7 +1104,7 @@
     <div class="container mx-auto px-6 lg:px-12">
         <div class="text-center mb-14 reveal">
             <div class="section-tag">Преимущества</div>
-            <h2 class="section-title mt-2">Почему выбирают <span class="accent">Эвакуатор Сейчас</span></h2>
+            <h2 class="section-title mt-2">Почему выбирают <span class="accent">Везунчик</span></h2>
         </div>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="card reveal">
@@ -1045,7 +1200,7 @@
                 <div class="service-icon">🚗</div>
                 <h3 class="text-xl font-bold mb-2">Легковые авто</h3>
                 <p class="text-gray-500 mb-3">Эвакуация легковых автомобилей любых марок и комплектаций</p>
-                <div class="service-price">от 1 500 ₽</div>
+                <div class="service-price">от 1 200 ₽</div>
                 <button onclick="openCalculator()" class="btn btn-primary w-full mt-3">
                     <i class="fas fa-paper-plane"></i> Заказать
                 </button>
@@ -1054,7 +1209,7 @@
                 <div class="service-icon">🚙</div>
                 <h3 class="text-xl font-bold mb-2">Внедорожники</h3>
                 <p class="text-gray-500 mb-3">Джипы и кроссоверы всех размеров и весовых категорий</p>
-                <div class="service-price">от 2 400 ₽</div>
+                <div class="service-price">от 1 800 ₽</div>
                 <button onclick="openCalculator()" class="btn btn-primary w-full mt-3">
                     <i class="fas fa-paper-plane"></i> Заказать
                 </button>
@@ -1063,7 +1218,7 @@
                 <div class="service-icon">🏍️</div>
                 <h3 class="text-xl font-bold mb-2">Мототехника</h3>
                 <p class="text-gray-500 mb-3">Мотоциклы, квадроциклы, снегоходы — бережно и быстро</p>
-                <div class="service-price">от 1 500 ₽</div>
+                <div class="service-price">от 1 200 ₽</div>
                 <button onclick="openCalculator()" class="btn btn-primary w-full mt-3">
                     <i class="fas fa-paper-plane"></i> Заказать
                 </button>
@@ -1072,7 +1227,7 @@
                 <div class="service-icon">🚛</div>
                 <h3 class="text-xl font-bold mb-2">Грузовики</h3>
                 <p class="text-gray-500 mb-3">Коммерческий транспорт и малотоннажные грузовики до 10 т</p>
-                <div class="service-price">от 8 000 ₽</div>
+                <div class="service-price">от 3 500 ₽</div>
                 <button onclick="openCalculator()" class="btn btn-primary w-full mt-3">
                     <i class="fas fa-paper-plane"></i> Заказать
                 </button>
@@ -1081,16 +1236,16 @@
                 <div class="service-icon">🚌</div>
                 <h3 class="text-xl font-bold mb-2">Автобусы</h3>
                 <p class="text-gray-500 mb-3">Микроавтобусы, минивэны и полноразмерные автобусы</p>
-                <div class="service-price">от 5 000 ₽</div>
+                <div class="service-price">от 4 500 ₽</div>
                 <button onclick="openCalculator()" class="btn btn-primary w-full mt-3">
                     <i class="fas fa-paper-plane"></i> Заказать
                 </button>
             </div>
             <div class="service-card reveal" style="transition-delay:0.5s;">
                 <div class="service-icon">🏗️</div>
-                <h3 class="text-xl font-bold mb-2">Спецтехника</h3>
+                <h3 class="text-xl font-bold mb-2">Спецтехника / Манипулятор</h3>
                 <p class="text-gray-500 mb-3">Тракторы, погрузчики, экскаваторы и строительная техника</p>
-                <div class="service-price">от 2 600 ₽</div>
+                <div class="service-price">от 8 000 ₽</div>
                 <button onclick="openCalculator()" class="btn btn-primary w-full mt-3">
                     <i class="fas fa-paper-plane"></i> Заказать
                 </button>
@@ -1114,125 +1269,46 @@
                     <div class="text-right">Стоимость</div>
                 </div>
                 <div class="price-row">
-                    <div class="flex items-center gap-3"><i class="fas fa-car text-orange-500"></i> Эвакуация легкового автомобиля</div>
-                    <div class="text-right font-bold text-orange-600">от 1 500 ₽</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-car text-orange-500"></i> Эвакуация легкового авто (до 15 км)</div>
+                    <div class="text-right font-bold text-orange-600">от 1 200 ₽</div>
                 </div>
                 <div class="price-row">
-                    <div class="flex items-center gap-3"><i class="fas fa-truck-pickup text-orange-500"></i> Эвакуация внедорожника (джипа)</div>
-                    <div class="text-right font-bold text-orange-600">от 2 400 ₽</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-truck-pickup text-orange-500"></i> Эвакуация внедорожника / джипа</div>
+                    <div class="text-right font-bold text-orange-600">от 1 800 ₽</div>
                 </div>
                 <div class="price-row">
                     <div class="flex items-center gap-3"><i class="fas fa-motorcycle text-orange-500"></i> Эвакуация мототехники</div>
-                    <div class="text-right font-bold text-orange-600">от 1 500 ₽</div>
+                    <div class="text-right font-bold text-orange-600">от 1 200 ₽</div>
                 </div>
                 <div class="price-row">
-                    <div class="flex items-center gap-3"><i class="fas fa-truck text-orange-500"></i> Эвакуация грузовика</div>
+                    <div class="flex items-center gap-3"><i class="fas fa-truck text-orange-500"></i> Эвакуация грузовика до 5 т</div>
+                    <div class="text-right font-bold text-orange-600">от 3 500 ₽</div>
+                </div>
+                <div class="price-row">
+                    <div class="flex items-center gap-3"><i class="fas fa-bus text-orange-500"></i> Эвакуация автобуса / микроавт.</div>
+                    <div class="text-right font-bold text-orange-600">от 4 500 ₽</div>
+                </div>
+                <div class="price-row">
+                    <div class="flex items-center gap-3"><i class="fas fa-route text-orange-500"></i> Сверх 15 км (за каждый км)</div>
+                    <div class="text-right font-bold text-orange-600">от 45 ₽/км</div>
+                </div>
+                <div class="price-row">
+                    <div class="flex items-center gap-3"><i class="fas fa-hand-holding text-orange-500"></i> Манипулятор / спецтехника</div>
                     <div class="text-right font-bold text-orange-600">от 8 000 ₽</div>
                 </div>
-                <div class="price-row">
-                    <div class="flex items-center gap-3"><i class="fas fa-bus text-orange-500"></i> Эвакуация автобуса</div>
-                    <div class="text-right font-bold text-orange-600">от 5 000 ₽</div>
+                <div class="price-row" style="background:#FFF7ED;">
+                    <div class="flex items-center gap-3"><i class="fas fa-moon text-orange-500"></i> Ночной тариф 22:00–07:00</div>
+                    <div class="text-right font-bold text-orange-600">+20% к цене</div>
                 </div>
-                <div class="price-row">
-                    <div class="flex items-center gap-3"><i class="fas fa-route text-orange-500"></i> Межгород (за км)</div>
-                    <div class="text-right font-bold text-orange-600">от 40 ₽/км</div>
-                </div>
-                <div class="price-row">
-                    <div class="flex items-center gap-3"><i class="fas fa-hand-holding text-orange-500"></i> Манипулятор до 3 тонн</div>
-                    <div class="text-right font-bold text-orange-600">от 9 000 ₽</div>
+                <div class="price-row" style="background:#F0FDF4;">
+                    <div class="flex items-center gap-3"><i class="fas fa-tag text-green-500"></i> Скидка по промокоду</div>
+                    <div class="text-right font-bold text-green-600">до −15%</div>
                 </div>
             </div>
             <div class="text-center">
                 <button onclick="openCalculator()" class="btn btn-primary text-lg" style="padding:1.1rem 2.8rem;">
                     <i class="fas fa-calculator"></i> Точный расчёт стоимости
                 </button>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ─── ORDER WITH MAP ─── -->
-<section id="order" class="py-20" style="background:var(--bg-alt);">
-    <div class="container mx-auto px-6 lg:px-12">
-        <div class="text-center mb-14 reveal">
-            <div class="section-tag">Заказ</div>
-            <h2 class="section-title mt-2">Заказать <span class="accent">эвакуатор</span></h2>
-            <p class="section-sub mt-4">Укажите точки на карте — получите мгновенный расчёт</p>
-        </div>
-        <div class="max-w-6xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden reveal">
-            <div class="grid lg:grid-cols-2">
-                <div class="relative h-96 lg:h-auto" style="min-height:480px;">
-                    <div id="map" class="w-full h-full"></div>
-                    <div class="absolute top-4 left-4 right-4 bg-white rounded-xl shadow-lg p-3 z-10 text-sm space-y-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-green-500 rounded-full flex-shrink-0"></div>
-                            <input id="pickupInput" type="text" placeholder="Откуда — введите адрес или нажмите на карту"
-                                class="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-green-400 transition" autocomplete="off">
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 bg-red-500 rounded-full flex-shrink-0"></div>
-                            <input id="deliveryInput" type="text" placeholder="Куда — введите адрес или нажмите на карту"
-                                class="flex-1 text-xs border border-gray-200 rounded-lg px-2 py-1.5 outline-none focus:border-red-400 transition" autocomplete="off">
-                        </div>
-                        <div class="pt-1 border-t flex justify-between items-center">
-                            <span class="font-semibold text-gray-600">Расстояние:</span>
-                            <span id="distance" class="font-bold text-orange-600">0 км</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="p-8 lg:p-10">
-                    <h3 class="text-2xl font-bold mb-6">Детали заказа</h3>
-                    <form id="orderForm" class="space-y-4">
-                        <div>
-                            <label class="form-label"><i class="fas fa-user text-orange-500 mr-1"></i> Ваше имя *</label>
-                            <input type="text" id="userName" required class="form-input" placeholder="Иван Иванов">
-                        </div>
-                        <div>
-                            <label class="form-label"><i class="fas fa-phone text-orange-500 mr-1"></i> Телефон *</label>
-                            <input type="tel" id="userPhone" required class="form-input" placeholder="+7 (999) 123-45-67">
-                        </div>
-                        <div>
-                            <label class="form-label"><i class="fas fa-truck text-orange-500 mr-1"></i> Тип транспорта *</label>
-                            <select id="serviceType" required class="form-input">
-                                <option value="">Выберите тип</option>
-                                <option value="light_car" data-price="1500">🚗 Легковой — от 1500₽</option>
-                                <option value="suv" data-price="2400">🚙 Внедорожник — от 2400₽</option>
-                                <option value="motorcycle" data-price="1500">🏍️ Мотоцикл — от 1500₽</option>
-                                <option value="truck" data-price="8000">🚛 Грузовик — от 8000₽</option>
-                                <option value="bus" data-price="5000">🚌 Автобус — от 5000₽</option>
-                                <option value="special" data-price="2600">🏗️ Спецтехника — от 2600₽</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="form-label"><i class="fas fa-car text-orange-500 mr-1"></i> Марка и модель</label>
-                            <input type="text" id="vehicleInfo" class="form-input" placeholder="Toyota Camry 2020">
-                        </div>
-                        <div class="price-summary">
-                            <div class="flex justify-between mb-1">
-                                <span class="text-sm font-semibold text-gray-600">Базовая стоимость:</span>
-                                <span id="basePrice" class="font-bold text-orange-600">0 ₽</span>
-                            </div>
-                            <div class="flex justify-between mb-2">
-                                <span class="text-sm font-semibold text-gray-600">За расстояние:</span>
-                                <span id="distancePrice" class="font-bold text-orange-600">0 ₽</span>
-                            </div>
-                            <div class="border-t border-orange-200 pt-2 flex justify-between items-center">
-                                <span class="text-lg font-bold">Итого:</span>
-                                <span id="totalOrderPrice" class="text-2xl font-black text-orange-600">0 ₽</span>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="form-label"><i class="fas fa-comment text-orange-500 mr-1"></i> Комментарий</label>
-                            <textarea id="orderComment" rows="2" class="form-input" placeholder="Дополнительная информация о ситуации..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-full" style="padding:1rem;">
-                            <i class="fas fa-paper-plane"></i> Отправить заявку
-                        </button>
-                        <p class="text-center text-xs text-gray-400">
-                            Комиссия сервиса 15% после выполнения заказа
-                        </p>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
@@ -1265,7 +1341,7 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="review-card reveal">
                 <div class="review-stars">★★★★★</div>
-                <p class="review-text">Машина заглохла на МКАДе в час пик. Позвонил в Эвакуатор Сейчас — через 14 минут уже приехал водитель. Вежливый, аккуратный. Цена именно такая, как назвали по телефону.</p>
+                <p class="review-text">Машина заглохла на МКАДе в час пик. Позвонил в Везунчик — через 14 минут уже приехал водитель. Вежливый, аккуратный. Цена именно такая, как назвали по телефону.</p>
                 <div class="review-author">
                     <div class="review-avatar">А</div>
                     <div>
@@ -1298,7 +1374,7 @@
             </div>
             <div class="review-card reveal" style="transition-delay:0.3s;">
                 <div class="review-stars">★★★★★</div>
-                <p class="review-text">Пробила картер, нужна была срочная эвакуация. Эвакуатор Сейчас прибыли за 11 минут! Машину забрали аккуратно. Очень доволен сервисом.</p>
+                <p class="review-text">Пробила картер, нужна была срочная эвакуация. Везунчик прибыли за 11 минут! Машину забрали аккуратно. Очень доволен сервисом.</p>
                 <div class="review-author">
                     <div class="review-avatar" style="background:linear-gradient(135deg,#8B5CF6,#6D28D9);">С</div>
                     <div>
@@ -1339,7 +1415,7 @@
         <div class="grid lg:grid-cols-2 gap-16 items-center">
             <div class="reveal">
                 <div class="section-tag" style="background:rgba(255,107,0,0.2); color:#FF8A33;">Приложение</div>
-                <h2 class="section-title mt-2" style="color:white;">Установите приложение <span style="color:var(--primary);">Эвакуатор Сейчас</span></h2>
+                <h2 class="section-title mt-2" style="color:white;">Установите приложение <span style="color:var(--primary);">Везунчик</span></h2>
                 <p class="mt-4 mb-8 text-gray-400 text-lg">Вызов эвакуатора за 2 клика. GPS-трекинг водителя. Скидка 10% на первый заказ.</p>
                 <div class="space-y-4 mb-8">
                     <div class="app-feature">
@@ -1372,7 +1448,7 @@
                     </div>
                 </div>
                 <div class="flex gap-4 flex-wrap">
-                    <a href="https://leha110700djz-glitch.github.io/evacuators/app/evakuator-seyhas.apk" class="store-badge" style="background:#1a3a1a; border-color:rgba(52,168,83,0.3);" download>
+                    <a href="https://leha110700djz-glitch.github.io/evacuators/app/vezunchik-client.apk" class="store-badge" style="background:#1a3a1a; border-color:rgba(52,168,83,0.3);" download>
                         <span class="store-badge-icon">🤖</span>
                         <div>
                             <div class="store-badge-text">Скачать APK</div>
@@ -1393,7 +1469,7 @@
                     <div class="phone-notch"></div>
                     <div class="phone-screen">
                         <div class="phone-screen-icon">🚛</div>
-                        <div class="phone-screen-title">Эвакуатор Сейчас</div>
+                        <div class="phone-screen-title">Везунчик</div>
                         <div class="phone-screen-sub">Эвакуатор уже едет</div>
                         <div style="background:rgba(255,107,0,0.1); border:1px solid rgba(255,107,0,0.3); border-radius:12px; padding:1rem; width:100%; text-align:center;">
                             <div style="color:rgba(255,255,255,0.6); font-size:0.75rem; margin-bottom:0.3rem;">Время прибытия</div>
@@ -1416,7 +1492,7 @@
     <div class="container mx-auto px-6 lg:px-12">
         <div class="max-w-5xl mx-auto text-center reveal">
             <div class="section-tag" style="background:rgba(255,255,255,0.15); color:white;">Для водителей</div>
-            <h2 class="section-title mt-2" style="color:white;">Стань партнёром <span style="text-shadow:0 2px 20px rgba(255,255,255,0.4);">Эвакуатор Сейчас</span></h2>
+            <h2 class="section-title mt-2" style="color:white;">Стань партнёром <span style="text-shadow:0 2px 20px rgba(255,255,255,0.4);">Везунчик</span></h2>
             <p class="text-xl mt-4 mb-12 text-white/80">Зарабатывай до 200 000 ₽ в месяц на своём эвакуаторе</p>
             <div class="grid md:grid-cols-3 gap-6 mb-12">
                 <div class="driver-card">
@@ -1556,7 +1632,7 @@
             </div>
             <div class="faq-item reveal" style="transition-delay:0.3s;">
                 <div class="faq-q" onclick="toggleFaq(this)">
-                    В каких городах работает «Эвакуатор Сейчас»?
+                    В каких городах работает «Везунчик»?
                     <div class="faq-icon"><i class="fas fa-plus"></i></div>
                 </div>
                 <div class="faq-a">Мы работаем в 300+ городах России, включая Москву, Санкт-Петербург, Новосибирск, Екатеринбург, Казань, Нижний Новгород, Челябинск, Самару, Уфу, Ростов-на-Дону и многие другие.</div>
@@ -1661,7 +1737,7 @@
         <div class="grid md:grid-cols-4 gap-10 mb-10">
             <div>
                 <div class="text-2xl font-black mb-4 flex items-center gap-2" style="color:var(--primary);">
-                    <i class="fas fa-truck-pickup"></i> Эвакуатор Сейчас
+                    <i class="fas fa-truck-pickup"></i> Везунчик
                 </div>
                 <p class="text-gray-500 text-sm leading-relaxed">Быстрая эвакуация авто 24/7. Связь: <a href="https://t.me/dobrycode" class="text-orange-500 hover:text-orange-400">@dobrycode</a> · <a href="tel:89772628182" class="text-orange-500 hover:text-orange-400">8 (977) 262-81-82</a></p>
                 <div class="flex gap-3 mt-5">
@@ -1698,16 +1774,17 @@
                     <li><a href="https://t.me/dobrycode" class="hover:text-white transition">@dobrycode</a></li>
                 </ul>
                 <div class="mt-4 p-3 bg-white/5 rounded-xl text-xs text-gray-500">
-                    <div class="flex items-center gap-2 mb-1"><i class="fas fa-check-circle text-green-500"></i> ИП «Эвакуатор Сейчас»</div>
+                    <div class="flex items-center gap-2 mb-1"><i class="fas fa-check-circle text-green-500"></i> ИП «Везунчик»</div>
                     <div class="flex items-center gap-2"><i class="fas fa-shield-alt text-orange-500"></i> Лицензия № 3854-МСК</div>
                 </div>
             </div>
         </div>
         <div class="border-t border-white/8 pt-8 flex flex-wrap justify-between items-center gap-4 text-sm text-gray-500">
-            <p>© 2024–2025 Эвакуатор Сейчас. Все права защищены. Telegram: @dobrycode</p>
+            <p>© 2024–2025 Везунчик. Все права защищены. Telegram: @dobrycode</p>
             <div class="flex gap-4">
-                <a href="#" class="hover:text-white transition">Политика конфиденциальности</a>
-                <a href="#" class="hover:text-white transition">Пользовательское соглашение</a>
+                <a href="legal/privacy.html" class="hover:text-white transition">Политика конфиденциальности</a>
+                <a href="legal/oferta.html" class="hover:text-white transition">Публичная оферта</a>
+                <a href="legal/driver-contract.html" class="hover:text-white transition">Договор с водителями</a>
             </div>
         </div>
     </div>
@@ -1725,22 +1802,22 @@
                 <label class="form-label">Тип транспорта</label>
                 <div class="grid grid-cols-2 gap-3">
                     <label class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer hover:border-orange-400 transition text-sm">
-                        <input type="radio" name="vehicle" value="light_car" data-price="1500" checked class="accent-orange-500"> 🚗 Легковой
+                        <input type="radio" name="vehicle" value="light_car" data-price="1200" data-km="55" checked class="accent-orange-500"> 🚗 Легковой
                     </label>
                     <label class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer hover:border-orange-400 transition text-sm">
-                        <input type="radio" name="vehicle" value="suv" data-price="2400" class="accent-orange-500"> 🚙 Внедорожник
+                        <input type="radio" name="vehicle" value="suv" data-price="1800" data-km="65" class="accent-orange-500"> 🚙 Внедорожник
                     </label>
                     <label class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer hover:border-orange-400 transition text-sm">
-                        <input type="radio" name="vehicle" value="motorcycle" data-price="1500" class="accent-orange-500"> 🏍️ Мотоцикл
+                        <input type="radio" name="vehicle" value="motorcycle" data-price="1200" data-km="50" class="accent-orange-500"> 🏍️ Мотоцикл
                     </label>
                     <label class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer hover:border-orange-400 transition text-sm">
-                        <input type="radio" name="vehicle" value="truck" data-price="8000" class="accent-orange-500"> 🚛 Грузовик
+                        <input type="radio" name="vehicle" value="truck" data-price="3500" data-km="90" class="accent-orange-500"> 🚛 Грузовик
                     </label>
                     <label class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer hover:border-orange-400 transition text-sm">
-                        <input type="radio" name="vehicle" value="bus" data-price="5000" class="accent-orange-500"> 🚌 Автобус
+                        <input type="radio" name="vehicle" value="bus" data-price="4500" data-km="100" class="accent-orange-500"> 🚌 Автобус
                     </label>
                     <label class="flex items-center gap-2 p-3 border-2 rounded-xl cursor-pointer hover:border-orange-400 transition text-sm">
-                        <input type="radio" name="vehicle" value="special" data-price="2600" class="accent-orange-500"> 🏗️ Спецтехника
+                        <input type="radio" name="vehicle" value="special" data-price="8000" data-km="120" class="accent-orange-500"> 🏗️ Манипулятор
                     </label>
                 </div>
             </div>
@@ -1796,7 +1873,7 @@
 
 <!-- ─── COOKIE BANNER ─── -->
 <div id="cookie-banner">
-    <span>Мы используем cookie для улучшения работы сайта. Продолжая, вы соглашаетесь с нашей <a href="#" style="color:var(--primary);">политикой конфиденциальности</a>.</span>
+    <span>Мы используем cookie для улучшения работы сайта. Продолжая, вы соглашаетесь с нашей <a href="legal/privacy.html" style="color:var(--primary);">политикой конфиденциальности</a>.</span>
     <button onclick="acceptCookies()" class="btn btn-primary flex-shrink-0" style="padding:0.6rem 1.4rem; font-size:0.85rem;">Принять</button>
 </div>
 
@@ -1884,12 +1961,14 @@ function calculatePrice() {
     const vehicle = document.querySelector('input[name="vehicle"]:checked');
     const dist = parseInt(document.getElementById('calcDist').value) || 0;
     const urgent = document.getElementById('urgent').checked;
-    const base = parseInt(vehicle?.dataset.price || 1500);
-    const distCost = Math.max(0, dist - 10) * 40;
-    const urgentCost = urgent ? 500 : 0;
-    const total = base + distCost + urgentCost;
+    const base = parseInt(vehicle?.dataset.price || 1200);
+    const kmRate = parseInt(vehicle?.dataset.km || 55);
+    const distCost = dist > 15 ? Math.round((dist - 15) * kmRate) : 0;
+    const urgentCost = urgent ? 300 : 0;
+    const nightAdd = isNightTime() ? Math.round((base + distCost) * 0.20) : 0;
+    const total = base + distCost + urgentCost + nightAdd;
     document.getElementById('calcBase').textContent = base.toLocaleString('ru-RU') + ' ₽';
-    document.getElementById('calcDist2').textContent = distCost.toLocaleString('ru-RU') + ' ₽';
+    document.getElementById('calcDist2').textContent = (distCost + nightAdd).toLocaleString('ru-RU') + ' ₽';
     document.getElementById('totalPrice').textContent = total.toLocaleString('ru-RU') + ' ₽';
     document.getElementById('calcOrderBtn').textContent = total.toLocaleString('ru-RU');
 }
@@ -1941,7 +2020,7 @@ async function sendTelegramOrder(data) {
     }
 
     const now = new Date().toLocaleString('ru-RU', {timeZone:'Europe/Moscow'});
-    const msg = `🚛 *НОВАЯ ЗАЯВКА — Эвакуатор Сейчас*\n\n` +
+    const msg = `🚛 *НОВАЯ ЗАЯВКА — Везунчик*\n\n` +
         `👤 *Имя:* ${data.name || '—'}\n` +
         `📞 *Телефон:* ${data.phone || '—'}\n` +
         `🚗 *Транспорт:* ${data.vehicle || '—'}\n` +
@@ -1950,8 +2029,10 @@ async function sendTelegramOrder(data) {
         `🏁 *Куда:* ${data.delivery || 'не указано'}\n` +
         `📏 *Расстояние:* ${data.distance || '—'}\n` +
         `💰 *Стоимость:* ${data.price || '—'}\n` +
+        `🎁 *Промокод:* ${data.promo || '—'}\n` +
         `💬 *Комментарий:* ${data.comment || '—'}\n` +
-        `⏰ *Время:* ${now} (МСК)`;
+        `⏰ *Время:* ${now} (МСК)\n` +
+        `🌙 *Ночной тариф:* ${isNightTime() ? 'ДА (+20%)' : 'нет'}`;
 
     if (ADMIN_CHAT_ID) {
         try {
@@ -1974,16 +2055,21 @@ document.getElementById('orderForm').addEventListener('submit', async e => {
     e.preventDefault();
     const pickup = document.getElementById('pickupInput')?.value || '';
     const delivery = document.getElementById('deliveryInput')?.value || '';
-    const dist = document.getElementById('distance').textContent;
-    const price = document.getElementById('totalOrderPrice').textContent;
+    const dist = document.getElementById('distance')?.textContent || '0 км';
+    const priceText = document.getElementById('totalOrderPrice')?.textContent || '';
+    const totalNum = parseInt(priceText.replace(/[^0-9]/g, '')) || 0;
+    const activeBtn = document.querySelector('.veh-btn.active');
+    const vehicleLabel = activeBtn ? activeBtn.innerText.split('\n').join(' ').trim() : '—';
     await sendTelegramOrder({
-        name: document.getElementById('userName').value,
-        phone: document.getElementById('userPhone').value,
-        vehicle: document.getElementById('serviceType').options[document.getElementById('serviceType').selectedIndex]?.text || '',
-        vehicleInfo: document.getElementById('vehicleInfo').value,
-        pickup, delivery, distance: dist, price,
+        name: document.getElementById('userName')?.value || '',
+        phone: document.getElementById('userPhone')?.value || '',
+        vehicle: vehicleLabel,
+        vehicleInfo: document.getElementById('vehicleInfo')?.value || '',
+        pickup, delivery, distance: dist, price: priceText,
+        promo: activePromo || '—',
         comment: document.getElementById('orderComment')?.value || ''
     });
+    addBonusPoints(totalNum);
     showSuccess();
     e.target.reset();
     clearYLocations();
@@ -2017,19 +2103,154 @@ document.getElementById('driverRegForm').addEventListener('submit', async e => {
     e.target.reset();
 });
 
-// ─── ORDER PRICE CALCULATOR ───
-function updateOrderPrice() {
-    const select = document.getElementById('serviceType');
-    const opt = select.options[select.selectedIndex];
-    const base = opt ? (parseInt(opt.dataset.price) || 0) : 0;
-    const dist = parseFloat(document.getElementById('distance').textContent) || 0;
-    const distCost = Math.max(0, dist - 10) * 40;
-    const total = base + distCost;
-    document.getElementById('basePrice').textContent = base.toLocaleString('ru-RU') + ' ₽';
-    document.getElementById('distancePrice').textContent = distCost.toLocaleString('ru-RU') + ' ₽';
-    document.getElementById('totalOrderPrice').textContent = total > 0 ? total.toLocaleString('ru-RU') + ' ₽' : '0 ₽';
+// ─── VEHICLE SELECTION (icon buttons) ───
+function selectVehicle(btn) {
+    document.querySelectorAll('.veh-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('vehicleTypeInput').value = btn.dataset.type;
+    updateOrderPrice();
 }
-document.getElementById('serviceType').addEventListener('change', updateOrderPrice);
+
+// ─── PRICING TABLE (Moscow 2025) ───
+const VEHICLE_PRICES = {
+    light_car:  {base: 1200, km: 55},
+    suv:        {base: 1800, km: 65},
+    motorcycle: {base: 1200, km: 50},
+    truck:      {base: 3500, km: 90},
+    bus:        {base: 4500, km: 100},
+    special:    {base: 8000, km: 120}
+};
+
+const PROMO_CODES = {
+    'ВЕЗУНЧИК': {disc: 0.15, label: '−15%'},
+    'ПЕРВЫЙ':   {disc: 0.10, label: '−10%'},
+    'НОЧЬ':     {disc: 0.10, label: '−10%'}
+};
+
+let activePromo = null;
+let bonusApplied = false;
+
+function isNightTime() {
+    const h = new Date().getHours();
+    return h >= 22 || h < 7;
+}
+
+function updateOrderPrice() {
+    const type = document.getElementById('vehicleTypeInput')?.value || 'light_car';
+    const p = VEHICLE_PRICES[type] || VEHICLE_PRICES.light_car;
+    const dist = parseFloat(document.getElementById('distance')?.textContent) || 0;
+
+    const base = p.base;
+    const distCost = dist > 15 ? Math.round((dist - 15) * p.km) : 0;
+    const nightAdd = isNightTime() ? Math.round((base + distCost) * 0.20) : 0;
+
+    const nightRow = document.getElementById('nightRow');
+    if (nightRow) nightRow.style.display = nightAdd > 0 ? 'flex' : 'none';
+
+    const subtotal = base + distCost + nightAdd;
+
+    // Promo discount
+    let promoAmount = 0;
+    if (activePromo && PROMO_CODES[activePromo]) {
+        promoAmount = Math.round(subtotal * PROMO_CODES[activePromo].disc);
+        const promoRow = document.getElementById('promoRow');
+        if (promoRow) {
+            promoRow.style.display = 'flex';
+            const el = document.getElementById('promoName');
+            if (el) el.textContent = activePromo;
+            const el2 = document.getElementById('promoDiscount');
+            if (el2) el2.textContent = '−' + promoAmount.toLocaleString('ru-RU') + ' ₽';
+        }
+    } else {
+        const promoRow = document.getElementById('promoRow');
+        if (promoRow) promoRow.style.display = 'none';
+    }
+
+    // Bonus points
+    const bonusPoints = parseInt(localStorage.getItem('vezunBonuses') || '0');
+    const bonusEl = document.getElementById('bonusCount');
+    if (bonusEl) bonusEl.textContent = bonusPoints.toLocaleString('ru-RU');
+
+    let bonusDisc = 0;
+    if (bonusApplied && bonusPoints >= 100) {
+        bonusDisc = Math.min(Math.floor(bonusPoints / 100) * 50, Math.round(subtotal * 0.3));
+        const bonusRow = document.getElementById('bonusRow');
+        if (bonusRow) {
+            bonusRow.style.display = 'flex';
+            const el = document.getElementById('bonusDiscount');
+            if (el) el.textContent = '−' + bonusDisc.toLocaleString('ru-RU') + ' ₽';
+        }
+    } else {
+        const bonusRow = document.getElementById('bonusRow');
+        if (bonusRow) bonusRow.style.display = 'none';
+    }
+
+    const total = Math.max(500, subtotal - promoAmount - bonusDisc);
+
+    const bpEl = document.getElementById('basePrice');
+    if (bpEl) bpEl.textContent = base.toLocaleString('ru-RU') + ' ₽';
+    const dpEl = document.getElementById('distancePrice');
+    if (dpEl) dpEl.textContent = distCost.toLocaleString('ru-RU') + ' ₽';
+    const npEl = document.getElementById('nightPrice');
+    if (npEl) npEl.textContent = nightAdd > 0 ? '+' + nightAdd.toLocaleString('ru-RU') + ' ₽' : '0 ₽';
+    const tpEl = document.getElementById('totalOrderPrice');
+    if (tpEl) tpEl.textContent = total.toLocaleString('ru-RU') + ' ₽';
+}
+
+function applyPromo() {
+    const code = (document.getElementById('promoInput')?.value || '').trim().toUpperCase();
+    const msgEl = document.getElementById('promoMessage');
+    if (!msgEl) return;
+    if (PROMO_CODES[code]) {
+        activePromo = code;
+        msgEl.style.color = '#22C55E';
+        msgEl.textContent = '✓ Промокод применён! Скидка ' + PROMO_CODES[code].label;
+        updateOrderPrice();
+    } else if (code) {
+        msgEl.style.color = '#EF4444';
+        msgEl.textContent = '✗ Неверный промокод. Попробуйте: ВЕЗУНЧИК';
+        activePromo = null;
+        updateOrderPrice();
+    } else {
+        msgEl.textContent = '';
+        activePromo = null;
+        updateOrderPrice();
+    }
+}
+
+function toggleBonuses() {
+    const bonusPoints = parseInt(localStorage.getItem('vezunBonuses') || '0');
+    if (bonusPoints < 100) {
+        const msgEl = document.getElementById('promoMessage');
+        if (msgEl) { msgEl.style.color = '#94A3B8'; msgEl.textContent = 'Нужно минимум 100 баллов (у вас ' + bonusPoints + ')'; }
+        return;
+    }
+    bonusApplied = !bonusApplied;
+    const btn = document.getElementById('useBonusBtn');
+    if (btn) btn.textContent = bonusApplied ? 'Отменить' : 'Применить';
+    updateOrderPrice();
+}
+
+function addBonusPoints(orderTotal) {
+    const earned = Math.floor(orderTotal / 10);
+    const current = parseInt(localStorage.getItem('vezunBonuses') || '0');
+    let newBalance = current + earned;
+    if (bonusApplied) {
+        const used = Math.ceil(Math.min(Math.floor(current/100)*50, Math.round(orderTotal*0.3)) * 2);
+        newBalance = Math.max(0, current - used) + earned;
+    }
+    localStorage.setItem('vezunBonuses', String(newBalance));
+    const orders = JSON.parse(localStorage.getItem('vezunOrders') || '[]');
+    orders.push({date: new Date().toISOString(), total: orderTotal, earned});
+    localStorage.setItem('vezunOrders', JSON.stringify(orders.slice(-50)));
+    bonusApplied = false;
+    activePromo = null;
+    const btn = document.getElementById('useBonusBtn');
+    if (btn) btn.textContent = 'Применить';
+    const promoInput = document.getElementById('promoInput');
+    if (promoInput) promoInput.value = '';
+    updateOrderPrice();
+}
 
 // ─── FAQ ───
 function toggleFaq(btn) {
@@ -2047,6 +2268,11 @@ function acceptCookies() {
 if (localStorage.getItem('cookieAccepted')) {
     document.getElementById('cookie-banner').classList.add('hidden');
 }
+
+// Init bonus balance display on load
+document.addEventListener('DOMContentLoaded', () => {
+    updateOrderPrice();
+});
 
 // ─── YANDEX MAPS ───
 let ymap, pickupMark, deliveryMark, routeObj;

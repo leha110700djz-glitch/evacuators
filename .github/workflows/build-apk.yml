@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APKs (Client + Driver)
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  build-apk:
+  build-apks:
     runs-on: ubuntu-latest
 
     steps:
@@ -33,50 +33,81 @@ jobs:
         working-directory: ./эвакуаторы
         run: flutter pub get
 
-      - name: Build APK (release)
+      # ─── CLIENT APK ───────────────────────────────────────────────
+      - name: Build CLIENT APK (release)
         working-directory: ./эвакуаторы
-        run: flutter build apk --release --no-tree-shake-icons
+        run: flutter build apk --release --no-tree-shake-icons --target=lib/main.dart
 
-      - name: Copy APK to landing
+      - name: Copy CLIENT APK to landing
         run: |
           mkdir -p landing/app
           cp эвакуаторы/build/app/outputs/flutter-apk/app-release.apk \
-             landing/app/evakuator-seyhas.apk
+             landing/app/vezunchik-client.apk
 
-      - name: Upload APK as artifact
+      # ─── DRIVER APK ───────────────────────────────────────────────
+      - name: Build DRIVER APK (release)
+        working-directory: ./эвакуаторы
+        run: flutter build apk --release --no-tree-shake-icons --target=lib/main_driver.dart
+
+      - name: Copy DRIVER APK to landing
+        run: |
+          cp эвакуаторы/build/app/outputs/flutter-apk/app-release.apk \
+             landing/app/vezunchik-driver.apk
+
+      # ─── ARTIFACTS ────────────────────────────────────────────────
+      - name: Upload CLIENT APK as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: evakuator-seyhas-apk
-          path: эвакуаторы/build/app/outputs/flutter-apk/app-release.apk
+          name: vezunchik-client-apk
+          path: landing/app/vezunchik-client.apk
           retention-days: 30
 
+      - name: Upload DRIVER APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vezunchik-driver-apk
+          path: landing/app/vezunchik-driver.apk
+          retention-days: 30
+
+      # ─── GITHUB RELEASE ───────────────────────────────────────────
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: apk-${{ github.run_number }}
-          name: "Эвакуатор Сейчас v1.1 (build ${{ github.run_number }})"
+          tag_name: v1.1.${{ github.run_number }}
+          name: "Везунчик v1.1 (build ${{ github.run_number }})"
           body: |
-            ## 📱 Приложение Эвакуатор Сейчас
+            ## 📱 Везунчик — Эвакуатор в Москве 24/7
 
-            Скачайте APK ниже и установите на Android устройство.
+            ### Скачайте APK и установите на Android:
 
+            | Приложение | Описание |
+            |------------|----------|
+            | 🚗 **vezunchik-client.apk** | Клиентское — вызов эвакуатора |
+            | 🚛 **vezunchik-driver.apk** | Водительское — приём заказов |
+
+            ### Что нового:
+            - Ребрендинг: «Везунчик» вместо «Эвакуатор Сейчас»
+            - Splash-экран с анимацией
+            - Онбординг для новых пользователей (3 слайда)
             - Яндекс.Карты — выбор точек подачи и назначения
-            - Telegram-уведомления для диспетчера
-            - Вызов одним нажатием
-            - Работа без интернета (звонок)
+            - Калькулятор цены с промокодами и бонусами
+            - Telegram-уведомления диспетчеру
+            - Ночной тариф +20% (авто-определение)
           files: |
-            эвакуаторы/build/app/outputs/flutter-apk/app-release.apk
+            landing/app/vezunchik-client.apk
+            landing/app/vezunchik-driver.apk
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit APK to landing/app
+      # ─── COMMIT APKs to landing ───────────────────────────────────
+      - name: Commit APKs to landing/app
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add landing/app/evakuator-seyhas.apk || true
-          git diff --staged --quiet || git commit -m "ci: update APK build #${{ github.run_number }}"
+          git add landing/app/vezunchik-client.apk landing/app/vezunchik-driver.apk || true
+          git diff --staged --quiet || git commit -m "ci: update APKs build #${{ github.run_number }}"
           git push || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
