@@ -793,8 +793,8 @@
             .live-num { font-size: 2rem; }
             .fab-group { bottom: 1.2rem; right: 1.2rem; }
             .order-grid { grid-template-columns: 1fr !important; }
-            .order-grid > div:first-child { min-height: 300px !important; }
-            .order-grid > div:last-child { max-height: none !important; }
+            .order-grid > div:first-child { min-height: 280px !important; order: 2; }
+            .order-grid > div:last-child { max-height: none !important; order: 1; }
         }
     </style>
 </head>
@@ -862,9 +862,12 @@
                     <a href="#order" class="btn btn-primary text-lg" style="padding:1.1rem 2.4rem;">
                         <i class="fas fa-map-marked-alt"></i> Вызвать эвакуатор
                     </a>
-                    <button onclick="openCalculator()" class="btn btn-ghost">
-                        <i class="fas fa-calculator"></i> Рассчитать стоимость
-                    </button>
+                    <a href="https://wa.me/79772628182" target="_blank" rel="noopener" class="btn btn-ghost" style="background:rgba(37,211,102,0.15); border-color:rgba(37,211,102,0.4); color:#fff;">
+                        <i class="fab fa-whatsapp" style="color:#25D366;"></i> WhatsApp
+                    </a>
+                    <a href="https://t.me/dobrycode" target="_blank" rel="noopener" class="btn btn-ghost" style="background:rgba(41,182,246,0.12); border-color:rgba(41,182,246,0.3); color:#fff;">
+                        <i class="fab fa-telegram" style="color:#29B6F6;"></i> Telegram
+                    </a>
                 </div>
 
                 <div class="hero-trust mt-8">
@@ -949,7 +952,7 @@
                             onfocus="this.style.borderColor='#EF4444'" onblur="this.style.borderColor='#E2E8F0'">
                     </div>
                     <div style="display:flex; justify-content:space-between; align-items:center; padding-top:7px; border-top:1px solid #F1F5F9; font-size:13px;">
-                        <span style="color:#64748B; font-weight:600;">📏 Расстояние: <span id="distance" style="color:#FF6B00; font-weight:800;">0 км</span></span>
+                        <span style="color:#64748B; font-weight:600;">📏 <span id="distance" style="color:#FF6B00; font-weight:800;">0 км</span><span id="eta" style="color:#64748B; font-size:12px; margin-left:4px;"></span></span>
                         <button type="button" onclick="clearYLocations()" style="background:none; border:none; color:#94A3B8; cursor:pointer; font-size:12px; padding:2px 6px; border-radius:4px;">✕ Сбросить</button>
                     </div>
                 </div>
@@ -1857,7 +1860,11 @@
     <div class="modal-content text-center" style="max-width:420px;">
         <div class="text-6xl mb-4">🎉</div>
         <h2 class="text-2xl font-black mb-3">Заявка принята!</h2>
-        <p class="text-gray-500 mb-6">Мы перезвоним в течение <strong>2 минут</strong>. Эвакуатор будет у вас примерно через 15 минут.</p>
+        <p style="color:#64748B; margin-bottom:8px;">Номер заявки: <strong id="orderNumber" style="color:#FF6B00; font-size:1.1em;">—</strong></p>
+        <p class="text-gray-500 mb-6">Мы перезвоним в течение <strong>2 минут</strong>. Эвакуатор будет у вас примерно через 15–30 минут.</p>
+        <a href="https://wa.me/79772628182" target="_blank" class="btn w-full mb-2" style="background:rgba(37,211,102,0.15); border:1px solid #25D366; color:#25D366; padding:.8rem; display:block; border-radius:12px; text-decoration:none; font-weight:700; margin-bottom:8px;">
+            <i class="fab fa-whatsapp"></i> Написать в WhatsApp
+        </a>
         <button onclick="closeSuccess()" class="btn btn-primary w-full" style="padding:1rem;">
             <i class="fas fa-check"></i> Отлично, жду!
         </button>
@@ -1981,7 +1988,12 @@ function submitCalculator() {
 }
 
 // ─── SUCCESS ───
-function showSuccess() { document.getElementById('successModal').classList.add('active'); }
+function showSuccess() {
+    const num = 'ВЗ-' + (1000 + Math.floor(Math.random() * 9000));
+    const el = document.getElementById('orderNumber');
+    if (el) el.textContent = num;
+    document.getElementById('successModal').classList.add('active');
+}
 function closeSuccess() { document.getElementById('successModal').classList.remove('active'); }
 document.getElementById('successModal').addEventListener('click', e => {
     if (e.target.id === 'successModal') closeSuccess();
@@ -2138,7 +2150,8 @@ function isNightTime() {
 function updateOrderPrice() {
     const type = document.getElementById('vehicleTypeInput')?.value || 'light_car';
     const p = VEHICLE_PRICES[type] || VEHICLE_PRICES.light_car;
-    const dist = parseFloat(document.getElementById('distance')?.textContent) || 0;
+    const distEl = document.getElementById('distance');
+    const dist = parseFloat(distEl?.dataset?.km || distEl?.textContent) || 0;
 
     const base = p.base;
     const distCost = dist > 15 ? Math.round((dist - 15) * p.km) : 0;
@@ -2296,12 +2309,14 @@ ymaps.ready(() => {
 
     // Yandex SuggestView для автодополнения адресов
     const pickupSuggest = new ymaps.SuggestView('pickupInput', {
-        results: 5,
-        boundedBy: [[54, 35], [57, 40]]
+        results: 7,
+        boundedBy: [[55.1, 36.8], [56.2, 38.2]],
+        strictBounds: false
     });
     const deliverySuggest = new ymaps.SuggestView('deliveryInput', {
-        results: 5,
-        boundedBy: [[54, 35], [57, 40]]
+        results: 7,
+        boundedBy: [[55.1, 36.8], [56.2, 38.2]],
+        strictBounds: false
     });
 
     pickupSuggest.events.add('select', e => geocodeAddress(e.get('item').value, 'pickup'));
@@ -2371,35 +2386,84 @@ function clearYLocations() {
     pickupMark = null; deliveryMark = null; routeObj = null;
     document.getElementById('pickupInput').value = '';
     document.getElementById('deliveryInput').value = '';
-    document.getElementById('distance').textContent = '0 км';
+    const distEl2 = document.getElementById('distance');
+    if (distEl2) { distEl2.textContent = '0 км'; distEl2.dataset.km = '0'; }
+    const etaEl2 = document.getElementById('eta');
+    if (etaEl2) etaEl2.textContent = '';
     updateOrderPrice();
 }
 
-function calcYRoute() {
+async function calcYRoute() {
     if (!pickupCoords || !deliveryCoords) return;
-    if (routeObj) ymap.geoObjects.remove(routeObj);
-    ymaps.route([pickupCoords, deliveryCoords], {
-        routingMode: 'auto',
-        avoidTrafficJams: true
-    }).then(route => {
-        routeObj = route;
-        route.options.set({strokeColor: '#FF6B00', strokeWidth: 5, opacity: 0.8});
-        ymap.geoObjects.add(route);
-        const km = (route.getLength() / 1000).toFixed(1);
-        document.getElementById('distance').textContent = km + ' км';
+    if (routeObj) { ymap.geoObjects.remove(routeObj); routeObj = null; }
+
+    // Показать индикатор загрузки
+    const distEl = document.getElementById('distance');
+    const etaEl = document.getElementById('eta');
+    if (distEl) distEl.textContent = '⏳ Строю маршрут...';
+    if (etaEl) etaEl.textContent = '';
+
+    // OSRM: бесплатный роутинг по дорогам, без API-ключа
+    // Яндекс coords [lat, lng] → OSRM ждёт lng,lat
+    const [pLat, pLng] = pickupCoords;
+    const [dLat, dLng] = deliveryCoords;
+    const osrmUrl = `https://router.project-osrm.org/route/v1/driving/`
+        + `${pLng},${pLat};${dLng},${dLat}`
+        + `?overview=full&geometries=geojson`;
+
+    try {
+        const resp = await fetch(osrmUrl, {signal: AbortSignal.timeout(8000)});
+        const data = await resp.json();
+        if (data.code !== 'Ok' || !data.routes || !data.routes.length) throw new Error('no route');
+
+        const route = data.routes[0];
+        const km = (route.distance / 1000).toFixed(1);
+        const mins = Math.round(route.duration / 60);
+
+        // GeoJSON coords [lng, lat] → Yandex [lat, lng]
+        const yCoords = route.geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+
+        routeObj = new ymaps.Polyline(yCoords, {}, {
+            strokeColor: '#FF6B00',
+            strokeWidth: 5,
+            opacity: 0.85
+        });
+        ymap.geoObjects.add(routeObj);
+
+        if (distEl) distEl.textContent = km + ' км';
+        if (etaEl) etaEl.textContent = `· ⏱ ~${mins} мин`;
+        document.getElementById('distance').dataset.km = km;
         updateOrderPrice();
-        ymap.setBounds(route.getBounds(), {checkZoomRange: true, zoomMargin: 40});
-    }).catch(() => {
-        // Фолбек: прямая линия
-        const line = new ymaps.Polyline([pickupCoords, deliveryCoords], {}, {strokeColor: '#FF6B00', strokeWidth: 4});
-        routeObj = line;
-        ymap.geoObjects.add(line);
-        const dLat = pickupCoords[0] - deliveryCoords[0];
-        const dLng = pickupCoords[1] - deliveryCoords[1];
-        const km = (Math.sqrt(dLat*dLat + dLng*dLng) * 111).toFixed(1);
-        document.getElementById('distance').textContent = '~' + km + ' км';
+
+        // Вписать маршрут в экран
+        const bounds = yCoords.reduce(
+            (b, c) => [
+                [Math.min(b[0][0], c[0]), Math.min(b[0][1], c[1])],
+                [Math.max(b[1][0], c[0]), Math.max(b[1][1], c[1])]
+            ],
+            [[90, 180], [-90, -180]]
+        );
+        ymap.setBounds(bounds, {checkZoomRange: true, zoomMargin: 50});
+
+    } catch (e) {
+        // Fallback: прямая линия пунктиром (OSRM недоступен)
+        const dLat2 = pickupCoords[0] - deliveryCoords[0];
+        const dLng2 = pickupCoords[1] - deliveryCoords[1];
+        const km = (Math.sqrt(dLat2 * dLat2 + dLng2 * dLng2) * 111).toFixed(1);
+
+        routeObj = new ymaps.Polyline([pickupCoords, deliveryCoords], {}, {
+            strokeColor: '#FF6B00',
+            strokeWidth: 4,
+            strokeStyle: 'dot',
+            opacity: 0.7
+        });
+        ymap.geoObjects.add(routeObj);
+
+        if (distEl) distEl.textContent = '~' + km + ' км';
+        if (etaEl) etaEl.textContent = '';
+        document.getElementById('distance').dataset.km = km;
         updateOrderPrice();
-    });
+    }
 }
 </script>
 </body>
