@@ -2354,13 +2354,14 @@ function setupAddressSuggest(inputId, onCoordsFound) {
         items.forEach(item => {
             const li = document.createElement('li');
             li.style.cssText = 'padding:10px 14px;cursor:pointer;color:#1E293B;line-height:1.35;transition:background .1s;border-bottom:1px solid #F8FAFC;';
-            li.innerHTML = '<span style="color:#FF6B00;margin-right:6px;">📍</span>'
-                + item.label.replace(/,\s*Россия\s*$/, '');
+            const clean = item.label.replace(/,\s*(Россия|Russia)\s*$/i, '').trim();
+            li.innerHTML = '<span style="color:#FF6B00;margin-right:6px;flex-shrink:0;">📍</span>'
+                + '<span>' + clean + '</span>';
             li.onmouseenter = () => li.style.background = '#FFF7F0';
             li.onmouseleave = () => li.style.background = '';
             li.onmousedown = async e => {
                 e.preventDefault();
-                input.value = item.label.replace(/,\s*Россия\s*$/, '');
+                input.value = item.label.replace(/,\s*(Россия|Russia)\s*$/i, '').trim();
                 hide();
                 if (item.lat != null) {
                     onCoordsFound([item.lat, item.lng]);
@@ -2388,33 +2389,93 @@ function setupAddressSuggest(inputId, onCoordsFound) {
         place(); ul.style.display = 'block';
 
         timer = setTimeout(async () => {
-            let items = [];
+            // Умный split: если последнее слово < 3 символов — ищем без него
+            const words = q.split(/\s+/);
+            const lastWord = words[words.length - 1];
+            const searchQ = (lastWord.length < 3 && words.length > 1)
+                ? words.slice(0, -1).join(' ')
+                : q;
 
-            // 1) Пробуем ymaps.suggest — работает без ключа в большинстве случаев
-            try {
-                const sugg = await ymaps.suggest(q, {
-                    results: 7,
-                    boundedBy: [[55.1, 36.8], [56.2, 38.2]],
-                    strictBounds: false
-                });
-                items = sugg.map(s => ({ label: s.value, lat: null, lng: null }));
-            } catch(e) {}
-
-            // 2) Fallback: Nominatim OpenStreetMap (Москва)
-            if (!items.length) {
+            // ── Nominatim и Overpass запускаем ПАРАЛЛЕЛЬНО ──────────────────
+            const nominatimFetch = (async () => {
                 try {
-                    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=7'
-                        + '&countrycodes=ru&accept-language=ru'
-                        + '&q=' + encodeURIComponent(q + ' Москва');
-                    const res = await fetch(url);
+                    const url = 'https://nominatim.openstreetmap.org/search'
+                        + '?format=json&limit=8&countrycodes=ru&accept-language=ru'
+                        + '&addressdetails=1&viewbox=36.0,54.5,39.5,56.9&bounded=0'
+                        + '&q=' + encodeURIComponent(searchQ);
+                    const res = await fetch(url, {signal: AbortSignal.timeout(5000)});
                     const data = await res.json();
-                    items = data.map(d => ({
-                        label: d.display_name,
-                        lat: parseFloat(d.lat),
-                        lng: parseFloat(d.lon)
-                    }));
-                } catch(e) {}
-            }
+
+                    // Если запрос был укорочён — дополнительно ищем полный запрос
+                    let data2 = [];
+                    if (searchQ !== q) {
+                        try {
+                            const url2 = 'https://nominatim.openstreetmap.org/search'
+                                + '?format=json&limit=5&countrycodes=ru&accept-language=ru'
+                                + '&addressdetails=1&viewbox=36.0,54.5,39.5,56.9&bounded=0'
+                                + '&q=' + encodeURIComponent(q);
+                            const res2 = await fetch(url2, {signal: AbortSignal.timeout(4000)});
+                            data2 = await res2.json();
+                        } catch(e) {}
+                    }
+
+                    const all = [...data2, ...data];
+                    const seen = new Set();
+                    return all.filter(d => {
+                        const key = d.osm_id || d.place_id;
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        return true;
+                    }).map(d => {
+                        const a = d.address || {};
+                        const road = a.road || a.pedestrian || a.footway || a.path;
+                        const city = a.city || a.town || a.village || a.municipality || a.county;
+                        const parts = [
+                            road,
+                            a.house_number,
+                            a.suburb || a.city_district || a.neighbourhood,
+                            city
+                        ].filter(Boolean);
+                        const label = parts.length >= 2
+                            ? parts.join(', ')
+                            : d.display_name.split(',').slice(0, 4).join(',').trim();
+                        return { label, lat: parseFloat(d.lat), lng: parseFloat(d.lon) };
+                    });
+                } catch(e) { return []; }
+            })();
+
+            // Overpass: поиск улиц по regex (работает без API-ключа)
+            const overpassFetch = lastWord.length >= 3 ? (async () => {
+                try {
+                    const escaped = lastWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const overpassQ = `[out:json][timeout:8];`
+                        + `way["name"~"${escaped}",i](54.5,36.0,56.9,39.5)["highway"];`
+                        + `out center 8;`;
+                    const res = await fetch(
+                        'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(overpassQ),
+                        {signal: AbortSignal.timeout(9000)}
+                    );
+                    const d = await res.json();
+                    return (d.elements || [])
+                        .filter(e => e.center && e.tags && e.tags.name)
+                        .map(e => ({
+                            label: e.tags.name + (e.tags['addr:city'] ? ', ' + e.tags['addr:city'] : ', Москва'),
+                            lat: e.center.lat,
+                            lng: e.center.lon
+                        }));
+                } catch(e) { return []; }
+            })() : Promise.resolve([]);
+
+            // Ждём оба источника параллельно
+            const [nominatimItems, overpassItems] = await Promise.all([nominatimFetch, overpassFetch]);
+
+            // Объединяем: Nominatim вперёд, Overpass добавляет недостающие
+            const items = [...nominatimItems];
+            overpassItems.forEach(o => {
+                if (!items.some(i => i.label.toLowerCase() === o.label.toLowerCase())) {
+                    items.push(o);
+                }
+            });
 
             renderItems(items);
             place(); ul.style.display = 'block';
