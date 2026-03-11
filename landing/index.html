@@ -2307,20 +2307,9 @@ ymaps.ready(() => {
         );
     }
 
-    // Yandex SuggestView для автодополнения адресов
-    const pickupSuggest = new ymaps.SuggestView('pickupInput', {
-        results: 7,
-        boundedBy: [[55.1, 36.8], [56.2, 38.2]],
-        strictBounds: false
-    });
-    const deliverySuggest = new ymaps.SuggestView('deliveryInput', {
-        results: 7,
-        boundedBy: [[55.1, 36.8], [56.2, 38.2]],
-        strictBounds: false
-    });
-
-    pickupSuggest.events.add('select', e => geocodeAddress(e.get('item').value, 'pickup'));
-    deliverySuggest.events.add('select', e => geocodeAddress(e.get('item').value, 'delivery'));
+    // Кастомный автодополнение адресов (position:fixed на body — никакого overflow)
+    setupAddressSuggest('pickupInput',  coords => setPickupCoords(coords));
+    setupAddressSuggest('deliveryInput', coords => setDeliveryCoords(coords));
 
     // Клик по карте
     ymap.events.add('click', e => {
@@ -2330,6 +2319,115 @@ ymaps.ready(() => {
         else { clearYLocations(); setPickupCoords(c); }
     });
 });
+
+// ─── CUSTOM ADDRESS SUGGEST (position:fixed на body, нет overflow-проблем) ───
+function setupAddressSuggest(inputId, onCoordsFound) {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    // Дропдаун крепится к body, чтобы не обрезался ни одним overflow
+    const ul = document.createElement('ul');
+    ul.style.cssText = [
+        'display:none', 'position:fixed', 'z-index:999999',
+        'background:#fff', 'border-radius:12px',
+        'box-shadow:0 8px 32px rgba(0,0,0,0.18)',
+        'border:1px solid #E2E8F0', 'margin:0', 'padding:4px 0',
+        'list-style:none', 'max-height:240px', 'overflow-y:auto',
+        'min-width:260px', 'font-family:inherit', 'font-size:13px'
+    ].join(';');
+    document.body.appendChild(ul);
+
+    function place() {
+        const r = input.getBoundingClientRect();
+        ul.style.top  = (r.bottom + 4) + 'px';
+        ul.style.left = r.left + 'px';
+        ul.style.width = r.width + 'px';
+    }
+    function hide() { ul.style.display = 'none'; ul.innerHTML = ''; }
+
+    function renderItems(items) {
+        ul.innerHTML = '';
+        if (!items.length) {
+            ul.innerHTML = '<li style="padding:10px 14px;color:#94A3B8;">Адрес не найден</li>';
+            return;
+        }
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.style.cssText = 'padding:10px 14px;cursor:pointer;color:#1E293B;line-height:1.35;transition:background .1s;border-bottom:1px solid #F8FAFC;';
+            li.innerHTML = '<span style="color:#FF6B00;margin-right:6px;">📍</span>'
+                + item.label.replace(/,\s*Россия\s*$/, '');
+            li.onmouseenter = () => li.style.background = '#FFF7F0';
+            li.onmouseleave = () => li.style.background = '';
+            li.onmousedown = async e => {
+                e.preventDefault();
+                input.value = item.label.replace(/,\s*Россия\s*$/, '');
+                hide();
+                if (item.lat != null) {
+                    onCoordsFound([item.lat, item.lng]);
+                } else {
+                    // Геокодируем через Yandex
+                    try {
+                        const res = await ymaps.geocode(item.label, {results:1});
+                        const obj = res.geoObjects.get(0);
+                        if (obj) onCoordsFound(obj.geometry.getCoordinates());
+                    } catch(e) {}
+                }
+            };
+            ul.appendChild(li);
+        });
+    }
+
+    let timer;
+    input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (q.length < 2) { hide(); return; }
+
+        // Лоадер
+        ul.innerHTML = '<li style="padding:10px 14px;color:#94A3B8;">🔍 Ищу адрес...</li>';
+        place(); ul.style.display = 'block';
+
+        timer = setTimeout(async () => {
+            let items = [];
+
+            // 1) Пробуем ymaps.suggest — работает без ключа в большинстве случаев
+            try {
+                const sugg = await ymaps.suggest(q, {
+                    results: 7,
+                    boundedBy: [[55.1, 36.8], [56.2, 38.2]],
+                    strictBounds: false
+                });
+                items = sugg.map(s => ({ label: s.value, lat: null, lng: null }));
+            } catch(e) {}
+
+            // 2) Fallback: Nominatim OpenStreetMap (Москва)
+            if (!items.length) {
+                try {
+                    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=7'
+                        + '&countrycodes=ru&accept-language=ru'
+                        + '&q=' + encodeURIComponent(q + ' Москва');
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    items = data.map(d => ({
+                        label: d.display_name,
+                        lat: parseFloat(d.lat),
+                        lng: parseFloat(d.lon)
+                    }));
+                } catch(e) {}
+            }
+
+            renderItems(items);
+            place(); ul.style.display = 'block';
+        }, 320);
+    });
+
+    input.addEventListener('focus', () => {
+        if (input.value.trim().length >= 2) input.dispatchEvent(new Event('input'));
+    });
+    input.addEventListener('blur', () => setTimeout(hide, 220));
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
+}
 
 function geocodeAddress(addr, type) {
     ymaps.geocode(addr, {results: 1}).then(res => {
